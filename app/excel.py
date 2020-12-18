@@ -7,7 +7,7 @@ def create_excel(survey_id, period, submission_list):
     print("Generating Excel file")
     workbook = Workbook()
     row = 2
-    surveys_with_comments_count = len(submission_list)
+    surveys_with_comments_count = 0
     ws = workbook.active
 
     for submission in submission_list:
@@ -49,17 +49,9 @@ def create_excel(survey_id, period, submission_list):
         ws.cell(1, 9, "5 Weekly Pay comment")
     print(f"{surveys_with_comments_count} out of {len(submission_list)} submissions had comments")
 
-    filename = "test.xlsx"
-    # workbook.save(filename)
     workbook.close()
-
-    print(f"Excel file {filename} generated")
 
     virtual_workbook = BytesIO()
     workbook.save(virtual_workbook)
 
-    return filename, virtual_workbook.getvalue()
-
-
-# create_excel("009", "2019", [submission2, submission2])
-
+    return virtual_workbook.getvalue()

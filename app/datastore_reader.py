@@ -1,3 +1,5 @@
+import json
+
 from google.cloud import datastore
 
 from app import PROJECT
@@ -13,7 +15,7 @@ def fetch_all_comments() -> dict:
     group_dict = {}
     for entity in results:
         key = f"{entity['survey_id']}_{entity['period']}"
-        value = decrypt(entity['encrypted_data'])
+        value = json.loads(decrypt(entity['encrypted_data']))
         if key in group_dict.keys():
             group_dict[key].append(value)
         else:

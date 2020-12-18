@@ -23,5 +23,5 @@ submission2 = {
 class TestCollate(unittest.TestCase):
 
     def test_create_xls(self):
-        result = collate_comments([submission2, submission2])
+        result = collate_comments()
         print(result)
