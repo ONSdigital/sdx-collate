@@ -1,0 +1,2 @@
+google-cloud-datastore
+openpyxl==3.0.3
