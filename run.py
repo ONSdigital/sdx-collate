@@ -1,6 +1,6 @@
-from app.datastore import fetch_all_comments
+from app.datastore import fetch_comments
 
 if __name__ == '__main__':
     print('Starting SDX Collate')
-    d = fetch_all_comments()
+    d = fetch_comments()
     print(d)

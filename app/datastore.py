@@ -1,15 +1,21 @@
 import json
+from datetime import date, datetime
 
 from google.cloud import datastore
 
 from app import PROJECT
 
+
 datastore_client = datastore.Client(project=PROJECT)
 
 
-def fetch_all_comments() -> dict:
+def fetch_comments() -> dict:
+
+    d = date.today()
+    today = datetime(d.year, d.month, d.day)
 
     query = datastore_client.query(kind='Comment')
+    query.add_filter("created", "<", today)
     results = query.fetch()
 
     group_dict = {}

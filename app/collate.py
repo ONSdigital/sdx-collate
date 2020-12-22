@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 from structlog import wrap_logger
 
-from app.datastore import fetch_all_comments
+from app.datastore import fetch_comments
 from app.deliver import deliver_comments, DeliveryError
 from app.excel import create_excel
 from app.in_memory_zip import InMemoryZip
@@ -45,7 +45,7 @@ def create_zip():
 
     zip_file = InMemoryZip()
 
-    group_dict = fetch_all_comments()
+    group_dict = fetch_comments()
     for k, submissions_list in group_dict.items():
         survey_id = k[0:3]
         period = k[4:]

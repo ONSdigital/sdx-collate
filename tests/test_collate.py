@@ -1,5 +1,7 @@
 import unittest
 
+from app.datastore import fetch_comments
+
 submission1 = {
     "ru_ref": "123456",
     "boxes_selected": "91w, 92w1, 92w2",
