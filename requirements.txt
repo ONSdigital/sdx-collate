@@ -1,2 +1,5 @@
 google-cloud-datastore
+google~=3.0.0
 openpyxl==3.0.3
+structlog==20.1.0
+requests==2.23.0

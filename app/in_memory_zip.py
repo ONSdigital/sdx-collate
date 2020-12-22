@@ -28,3 +28,7 @@ class InMemoryZip:
         file_names = zf.namelist()
         zf.close()
         return file_names
+
+    def get(self):
+        self.rewind()
+        return self.in_memory_zip
