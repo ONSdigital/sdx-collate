@@ -1,5 +1,4 @@
 import logging
-import time
 
 from datetime import datetime
 from structlog import wrap_logger
@@ -10,30 +9,16 @@ from app.excel import create_excel
 from app.in_memory_zip import InMemoryZip
 
 logger = wrap_logger(logging.getLogger(__name__))
-RETRY_LIMIT = 5
 
 
 def collate_comments():
-    retry_count = 0
-    sleep_time = 1
-    while not collate() and retry_count < RETRY_LIMIT:
-        logger.info(f"collate failed. Backing off for {sleep_time} seconds")
-        time.sleep(sleep_time)
-        retry_count = retry_count + 1
-        sleep_time * 5
-
-
-def collate():
-
     try:
         file_name = get_file_name()
         zip_bytes = create_zip()
         deliver_comments(file_name, zip_bytes)
-        return True
 
     except DeliveryError:
         logger.info("delivery error")
-        return False
 
 
 def get_file_name():
