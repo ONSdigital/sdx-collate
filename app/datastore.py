@@ -3,10 +3,10 @@ from datetime import date, datetime
 
 from google.cloud import datastore
 
-from app import PROJECT
+from app import PROJECT_ID
 from app.decrypt import decrypt_comment
 
-datastore_client = datastore.Client(project=PROJECT)
+datastore_client = datastore.Client(project=PROJECT_ID)
 
 
 def fetch_comments() -> dict:
