@@ -21,7 +21,7 @@ def fetch_comments() -> dict:
     group_dict = {}
     for entity in results:
         key = f"{entity['survey_id']}_{entity['period']}"
-        value = json.loads(decrypt_comment(entity['encrypted_data']))
+        value = decrypt_comment(entity['encrypted_data'])
         if key in group_dict.keys():
             group_dict[key].append(value)
         else:
