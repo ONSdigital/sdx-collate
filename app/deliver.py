@@ -42,6 +42,7 @@ def deliver_comments(file_name: str, zip_file: bytes):
 
 def create_comments_metadata(file_name) -> dict:
     metadata = {
+        'filename': file_name,
         'tx_id': file_name,
         'survey_id': file_name,
         'description': 'significant changes comments zip',
