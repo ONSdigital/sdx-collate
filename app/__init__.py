@@ -13,4 +13,8 @@ logging.basicConfig(
 
 PROJECT_ID = os.getenv('PROJECT_ID', 'ons-sdx-sandbox')
 
-DELIVER_SERVICE_URL = "sdx-deliver:80"
+DELIVER_SERVICE_HOST = os.getenv('SDX_DELIVER_SERVICE_HOST', 'localhost')
+DELIVER_SERVICE_PORT = os.getenv('SDX_DELIVER_SERVICE_PORT', 8080)
+DELIVER_SERVICE_URL = f'{DELIVER_SERVICE_HOST}:{DELIVER_SERVICE_PORT}'
+
+# DELIVER_SERVICE_URL = "sdx-deliver:80"
