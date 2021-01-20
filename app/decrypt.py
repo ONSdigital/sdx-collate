@@ -15,7 +15,7 @@ def decrypt_comment(comment_token: str) -> dict:
     # comment_key = base64.b64encode(key_byte)
 
     logger.info("decrypting survey")
-    key = Path('../comment_key.txt').read_bytes()
+    key = Path('comment_key.txt').read_bytes()
     f = Fernet(key)
 
     comment_bytes = f.decrypt(comment_token.encode())
