@@ -1,4 +1,6 @@
+import io
 import logging
+import zipfile
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -55,6 +57,7 @@ def post(file_bytes, file_type, metadata):
     url = f"http://{DELIVER_SERVICE_URL}/deliver/{file_type}"
     logger.info(f"calling {url}")
     try:
+        logger.info(f'posting comments to {url}')
         response = session.post(url, params=metadata, files={DELIVER_NAME: file_bytes})
     except MaxRetryError:
         logger.error("Max retries exceeded", request_url=url)
