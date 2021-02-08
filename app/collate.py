@@ -1,13 +1,36 @@
-from app.datastore_reader import fetch_all_comments
+import logging
+
+from datetime import datetime
+from structlog import wrap_logger
+
+from app.datastore import fetch_comments
+from app.deliver import deliver_comments, DeliveryError
 from app.excel import create_excel
 from app.in_memory_zip import InMemoryZip
 
+logger = wrap_logger(logging.getLogger(__name__))
+
 
 def collate_comments():
+    try:
+        file_name = get_file_name()
+        zip_bytes = create_zip()
+        deliver_comments(file_name, zip_bytes)
 
-    in_memory_zip = InMemoryZip()
+    except DeliveryError:
+        logger.info("delivery error")
 
-    group_dict = fetch_all_comments()
+
+def get_file_name():
+    date_time = datetime.utcnow()
+    return f"{date_time.strftime('%Y-%m-%d')}.zip"
+
+
+def create_zip():
+
+    zip_file = InMemoryZip()
+
+    group_dict = fetch_comments()
     for k, submissions_list in group_dict.items():
         survey_id = k[0:3]
         period = k[4:]
@@ -15,6 +38,6 @@ def collate_comments():
         workbook = create_excel(survey_id, period, submissions_list)
         filename = f"{k}.xls"
         print(f"appending {filename} to zip")
-        in_memory_zip.append(filename, workbook)
+        zip_file.append(filename, workbook)
 
-    return in_memory_zip.get_filenames()
+    return zip_file.get()

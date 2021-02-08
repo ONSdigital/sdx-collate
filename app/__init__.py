@@ -12,3 +12,6 @@ logging.basicConfig(
 )
 
 PROJECT = 'ons-sdx-sandbox'
+
+DELIVER_SERVICE_HOST = os.getenv('SDX_DELIVER_SERVICE_HOST', 'localhost')
+DELIVER_SERVICE_PORT = os.getenv('SDX_DELIVER_SERVICE_PORT', 8080)

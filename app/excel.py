@@ -1,10 +1,13 @@
+import logging
 from io import BytesIO
 from openpyxl import Workbook
+from structlog import wrap_logger
+
+logger = wrap_logger(logging.getLogger(__name__))
 
 
 def create_excel(survey_id, period, submission_list):
-    """Extract comments from submissions and write them to an excel file"""
-    print("Generating Excel file")
+    logger.info("Generating Excel file")
     workbook = Workbook()
     row = 2
     surveys_with_comments_count = 0
@@ -47,7 +50,7 @@ def create_excel(survey_id, period, submission_list):
         ws.cell(1, 7, "Calendar Monthly comment")
         ws.cell(1, 8, "4 Weekly Pay comment")
         ws.cell(1, 9, "5 Weekly Pay comment")
-    print(f"{surveys_with_comments_count} out of {len(submission_list)} submissions had comments")
+    logger.info(f"{surveys_with_comments_count} out of {len(submission_list)} submissions had comments")
 
     workbook.close()
 
