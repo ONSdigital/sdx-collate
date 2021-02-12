@@ -1,12 +1,11 @@
-import json
 from datetime import date, datetime
 
 from google.cloud import datastore
 
-from app import PROJECT
+from app import PROJECT_ID
 from app.decrypt import decrypt_comment
 
-datastore_client = datastore.Client(project=PROJECT)
+datastore_client = datastore.Client(project=PROJECT_ID)
 
 
 def fetch_comments() -> dict:
@@ -21,7 +20,7 @@ def fetch_comments() -> dict:
     group_dict = {}
     for entity in results:
         key = f"{entity['survey_id']}_{entity['period']}"
-        value = json.loads(decrypt_comment(entity['encrypted_data']))
+        value = decrypt_comment(entity['encrypted_data'])
         if key in group_dict.keys():
             group_dict[key].append(value)
         else:

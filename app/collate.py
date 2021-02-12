@@ -27,7 +27,6 @@ def get_file_name():
 
 
 def create_zip():
-
     zip_file = InMemoryZip()
 
     group_dict = fetch_comments()
