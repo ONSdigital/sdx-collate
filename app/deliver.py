@@ -1,6 +1,4 @@
-import io
 import logging
-import zipfile
 
 import requests
 from requests.adapters import HTTPAdapter
