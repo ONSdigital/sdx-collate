@@ -1,19 +1,15 @@
-import logging
-
 import requests
+import structlog
+
 from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectionError
 from requests.packages.urllib3.exceptions import MaxRetryError
 from requests.packages.urllib3.util.retry import Retry
-from structlog import wrap_logger
-
 from app import DELIVER_SERVICE_URL
 
 
 DELIVER_NAME = 'zip'
-
-logger = wrap_logger(logging.getLogger(__name__))
-
+logger = structlog.get_logger()
 session = requests.Session()
 retries = Retry(total=5, backoff_factor=0.1)
 session.mount('http://', HTTPAdapter(max_retries=retries))

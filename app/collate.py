@@ -1,18 +1,19 @@
-import logging
+import structlog
 
 from datetime import datetime
-from structlog import wrap_logger
 
+from structlog.contextvars import bind_contextvars
 from app.datastore import fetch_comments
 from app.deliver import deliver_comments, DeliveryError
 from app.excel import create_excel
 from app.in_memory_zip import InMemoryZip
 
-logger = wrap_logger(logging.getLogger(__name__))
+logger = structlog.get_logger()
 
 
 def collate_comments():
     try:
+        bind_contextvars(app="SDX-Worker")
         file_name = get_file_name()
         zip_bytes = create_zip()
         deliver_comments(file_name, zip_bytes)
