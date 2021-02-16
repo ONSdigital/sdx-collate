@@ -1,7 +1,6 @@
 import structlog
 
 from datetime import datetime
-
 from structlog.contextvars import bind_contextvars
 from app.datastore import fetch_comments
 from app.deliver import deliver_comments, DeliveryError
@@ -23,11 +22,13 @@ def collate_comments():
 
 
 def get_file_name():
+    logger.info('Getting filename')
     date_time = datetime.utcnow()
     return f"{date_time.strftime('%Y-%m-%d')}.zip"
 
 
 def create_zip():
+    logger.info('Creating zip file')
     zip_file = InMemoryZip()
     group_dict = fetch_comments()
     for k, submissions_list in group_dict.items():

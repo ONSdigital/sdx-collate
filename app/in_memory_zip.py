@@ -1,10 +1,16 @@
+import structlog
+
 from io import BytesIO
 from zipfile import ZIP_DEFLATED, ZipFile
+
+logger = structlog.get_logger()
 
 
 class InMemoryZip:
     """Class for creating in memory Zip objects using BytesIO."""
+
     def __init__(self):
+        logger.info('Creating in memory zip')
         self.in_memory_zip = BytesIO()
 
     def append(self, filename_in_zip, file_contents):

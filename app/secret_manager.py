@@ -18,4 +18,5 @@ def get_secret(project_id, secret_id):
     response = client.access_secret_version(request={"name": name})
 
     payload = response.payload.data.decode("UTF-8")
+
     return payload
