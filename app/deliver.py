@@ -42,6 +42,7 @@ def deliver_comments(file_name: str, zip_file: bytes):
 
 def create_comments_metadata(file_name) -> dict:
     metadata = {
+        'filename': file_name,
         'tx_id': file_name,
         'survey_id': file_name,
         'description': 'significant changes comments zip',
@@ -54,6 +55,7 @@ def post(file_bytes, file_type, metadata):
     url = f"http://{DELIVER_SERVICE_URL}/deliver/{file_type}"
     logger.info(f"calling {url}")
     try:
+        logger.info(f'posting comments to {url}')
         response = session.post(url, params=metadata, files={DELIVER_NAME: file_bytes})
     except MaxRetryError:
         logger.error("Max retries exceeded", request_url=url)
