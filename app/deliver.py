@@ -1,19 +1,15 @@
-import logging
-
 import requests
+import structlog
+
 from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectionError
 from requests.packages.urllib3.exceptions import MaxRetryError
 from requests.packages.urllib3.util.retry import Retry
-from structlog import wrap_logger
-
 from app import DELIVER_SERVICE_URL
 
 
 DELIVER_NAME = 'zip'
-
-logger = wrap_logger(logging.getLogger(__name__))
-
+logger = structlog.get_logger()
 session = requests.Session()
 retries = Retry(total=5, backoff_factor=0.1)
 session.mount('http://', HTTPAdapter(max_retries=retries))
@@ -24,11 +20,13 @@ class DeliveryError(Exception):
 
 
 def deliver_comments(file_name: str, zip_file: bytes):
+    logger.info('Delivering comments')
     file_type = "comments"
     metadata = create_comments_metadata(file_name)
     response = post(zip_file, file_type, metadata)
 
     if response.status_code == 200:
+        logger.info('Successfully delivered comments')
         return True
     elif 400 <= response.status_code < 500:
         msg = "Bad Request response from sdx-deliver"

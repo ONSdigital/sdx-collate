@@ -1,9 +1,9 @@
-import logging
-from io import BytesIO
-from openpyxl import Workbook
-from structlog import wrap_logger
+import structlog
 
-logger = wrap_logger(logging.getLogger(__name__))
+from openpyxl import Workbook
+from io import BytesIO
+
+logger = structlog.get_logger()
 
 
 def create_excel(survey_id, period, submission_list):
