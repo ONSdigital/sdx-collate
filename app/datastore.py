@@ -14,7 +14,7 @@ def fetch_comments() -> dict:
     today = datetime(d.year, d.month, d.day)
 
     query = datastore_client.query(kind='Comment')
-    query.add_filter("created", "<", today)
+    query.add_filter("created", "<", str(today))
     results = query.fetch()
 
     group_dict = {}
