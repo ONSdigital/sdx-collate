@@ -15,7 +15,7 @@ def fetch_comments() -> dict:
         d = date.today()
         today = datetime(d.year, d.month, d.day)
         query = datastore_client.query(kind='Comment')
-        query.add_filter("created", "<", today)
+        query.add_filter("created", "<", str(today))
         results = query.fetch()
 
         logger.info('Sorting query results')
