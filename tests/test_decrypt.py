@@ -1,13 +1,9 @@
 import unittest
 
-from app import get_test_config
 from app.decrypt import decrypt_comment
 
 
 class TestDecrypt(unittest.TestCase):
-
-    def setUp(self) -> None:
-        get_test_config()
 
     def test_decrypt_comment_009(self):
         data = '''gAAAAABgCE5W1uIF-eNt96wT7sOOwgQyBoMNWhoGTzt3PZQeBw2LDQDK8oFWJtXW0aWbp4F5li8o8DxdZ2G9Hjq0Y5ahRAhyJj

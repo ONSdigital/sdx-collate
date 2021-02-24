@@ -2,7 +2,7 @@ import structlog
 
 from datetime import datetime
 from structlog.contextvars import bind_contextvars
-from app.datastore import fetch_comments
+from app.datastore_connect import fetch_comments
 from app.deliver import deliver_comments, DeliveryError
 from app.excel import create_excel
 from app.in_memory_zip import InMemoryZip

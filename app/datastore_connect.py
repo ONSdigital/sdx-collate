@@ -1,11 +1,9 @@
 import structlog
 
 from datetime import date, datetime
-from google.cloud import datastore
-from app import PROJECT_ID
+from app import CONFIG
 from app.decrypt import decrypt_comment
 
-datastore_client = datastore.Client(project=PROJECT_ID)
 logger = structlog.get_logger()
 
 
@@ -14,7 +12,7 @@ def fetch_comments() -> dict:
         logger.info('Fetching comments from Datastore')
         d = date.today()
         today = datetime(d.year, d.month, d.day)
-        query = datastore_client.query(kind='Comment')
+        query = CONFIG.DATASTORE_CLIENT.query(kind='Comment')
         query.add_filter("created", "<", str(today))
         results = query.fetch()
 
