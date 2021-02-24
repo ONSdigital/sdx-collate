@@ -5,13 +5,19 @@ from app.secret_manager import get_secret
 
 logging_config()
 
-PROJECT_ID = os.getenv('PROJECT_ID', 'ons-sdx-sandbox')
-
+project_id = os.getenv('PROJECT_ID', 'ons-sdx-sandbox')
 DELIVER_SERVICE_URL = "sdx-deliver:80"
 
-DECRYPT_COMMENT_KEY = get_secret(PROJECT_ID, 'sdx-comment-key')
+
+class Config:
+
+    def __init__(self, proj_id) -> None:
+        self.PROJECT_ID = proj_id
+        self.DECRYPT_COMMENT_KEY = "E3rjFT2i9ALcvc99Pe3YqjIGrzm3LdMsCXc8nUaOEbc="
 
 
-def get_test_config():
-    global DECRYPT_COMMENT_KEY
-    DECRYPT_COMMENT_KEY = "E3rjFT2i9ALcvc99Pe3YqjIGrzm3LdMsCXc8nUaOEbc="
+CONFIG = Config(project_id)
+
+
+def cloud_config():
+    CONFIG.DECRYPT_COMMENT_KEY = get_secret(CONFIG.PROJECT_ID, 'sdx-comment-key')

@@ -2,10 +2,10 @@ import structlog
 
 from datetime import date, datetime
 from google.cloud import datastore
-from app import PROJECT_ID
+from app import CONFIG
 from app.decrypt import decrypt_comment
 
-datastore_client = datastore.Client(project=PROJECT_ID)
+datastore_client = datastore.Client(project=CONFIG.PROJECT_ID)
 logger = structlog.get_logger()
 
 
