@@ -1,0 +1,32 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: sdx-collate
+spec:
+  schedule: 0 16 * * 1-5
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: sdx-collate
+            image: eu.gcr.io/{{ .Values.project_id }}/sdx-collate:{{ .Chart.appVersion }}
+            imagePullPolicy: Always
+            args:
+            - /bin/sh
+            - -c
+            - python run.py
+            env:
+            - name: PROJECT_ID
+              valueFrom: 
+                configMapKeyRef:
+                  name: config          
+                  key: project_id
+            - name: LOGGING_LEVEL
+              valueFrom: 
+                configMapKeyRef:
+                  name: config          
+                  key: logging_level
+          restartPolicy: OnFailure
+          serviceAccountName: sdx-workload-identity
+  successfulJobsHistoryLimit: 1
