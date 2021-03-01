@@ -8,8 +8,8 @@ extracted and stored by sdx-survey.
 ## Process
 
 The collate microservice is triggered daily at 06:00 via kubernetes CronJob. Reading from Google Datastore, all comments 
-stored **prior to the current date** will be decrypted, added to an in-memory Excel file (xml) and sent to SDX-Deliver via
-HTTP POST request: `deliver/comments`
+stored **prior to the current date** will be decrypted, added to an in-memory Excel file (xml) and sent to sdx-deliver via
+HTTP: `POST` request: `deliver/comments`
 
 ## Getting started
 Install requirements:
