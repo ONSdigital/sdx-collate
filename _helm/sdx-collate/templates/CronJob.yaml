@@ -25,7 +25,7 @@ spec:
             - name: LOGGING_LEVEL
               valueFrom: 
                 configMapKeyRef:
-                  name: config          
+                  name: sdx-config          
                   key: logging_level
           restartPolicy: OnFailure
           serviceAccountName: sdx-workload-identity
