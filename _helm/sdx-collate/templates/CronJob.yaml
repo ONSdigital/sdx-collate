@@ -10,7 +10,7 @@ spec:
         spec:
           containers:
           - name: sdx-collate
-            image: eu.gcr.io/{{ .Values.project_id }}/sdx-collate:{{ .Chart.appVersion }}
+            image: eu.gcr.io/{{ .Values.registry_location }}/sdx-collate:{{ .Chart.AppVersion }}
             imagePullPolicy: Always
             args:
             - /bin/sh
