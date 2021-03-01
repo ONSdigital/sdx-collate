@@ -20,7 +20,7 @@ spec:
             - name: PROJECT_ID
               valueFrom: 
                 configMapKeyRef:
-                  name: config          
+                  name: sdx-config
                   key: project_id
             - name: LOGGING_LEVEL
               valueFrom: 

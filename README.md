@@ -36,7 +36,7 @@ Collate reads comments out of GCP Datastore under the **'Comments'** entity.
 |-----------------|------------------------------|----------------
 | key (name/id)   | Transaction ID (tx_id)       | `name=09bd7d53-6f16-4efa-a9c0-ea6c35976062`
 | created         | Date and time comment stored | `yyyy-mm-dd HH:MM:SS.ss`
-| encrypted_data  | Encrypted JSON               |  
+| encrypted_data  | Encrypted JSON               | `gAAAAABgOR2_QLs62GL7DFp0Fr_DwRatIQlWK...`
 | period          | Period from survey JSON      | `period: 201904`
 | survey_id       | Survey ID                    | `survey_id: 017`
 
