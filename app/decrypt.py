@@ -1,15 +1,14 @@
 import json
-import logging
+import structlog
 
 from cryptography.fernet import Fernet
-from structlog import wrap_logger
-from app import DECRYPT_COMMENT_KEY
+from app import CONFIG
 
-
-logger = wrap_logger(logging.getLogger(__name__))
+logger = structlog.get_logger()
 
 
 def decrypt_comment(comment_token: str) -> dict:
-    f = Fernet(DECRYPT_COMMENT_KEY)
+    logger.info(f'Decrypting comment using: {CONFIG.DECRYPT_COMMENT_KEY}')
+    f = Fernet(CONFIG.DECRYPT_COMMENT_KEY)
     comment_bytes = f.decrypt(comment_token.encode())
     return json.loads(comment_bytes.decode())
