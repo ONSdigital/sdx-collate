@@ -24,17 +24,18 @@ def deliver_comments(file_name: str, zip_file: bytes):
     file_type = "comments"
     metadata = create_comments_metadata(file_name)
     response = post(zip_file, file_type, metadata)
+    status_code = response.status_code
 
-    if response.status_code == 200:
+    if status_code == 200:
         logger.info('Successfully delivered comments')
         return True
-    elif 400 <= response.status_code < 500:
+    elif 400 <= status_code < 500:
         msg = "Bad Request response from sdx-deliver"
-        logger.info(msg)
+        logger.error(msg, status_code=structlog)
         raise Exception(msg)
     else:
         msg = "Bad response from sdx-deliver"
-        logger.info(msg)
+        logger.error(msg, status_code=status_code)
         raise DeliveryError(msg)
 
 

@@ -5,7 +5,7 @@ logger = structlog.get_logger()
 
 
 def get_secret(project_id, secret_id):
-    logger.info('Getting secrets')
+    logger.info('Getting secrets from Secret Manager')
 
     version_id = 'latest'
 
