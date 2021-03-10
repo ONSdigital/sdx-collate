@@ -1,4 +1,5 @@
 import os
+import structlog
 
 from google.cloud import datastore
 
@@ -6,6 +7,7 @@ from app.logger import logging_config
 from app.secret_manager import get_secret
 
 logging_config()
+logger = structlog.get_logger()
 
 project_id = os.getenv('PROJECT_ID', 'ons-sdx-sandbox')
 DELIVER_SERVICE_URL = "sdx-deliver:80"
@@ -23,6 +25,7 @@ CONFIG = Config(project_id)
 
 
 def cloud_config():
+    logger.info("Loading Cloud Config")
     datastore_client = datastore.Client(project=CONFIG.PROJECT_ID)
     CONFIG.DATASTORE_CLIENT = datastore_client
     CONFIG.DECRYPT_COMMENT_KEY = get_secret(CONFIG.PROJECT_ID, 'sdx-comment-key')

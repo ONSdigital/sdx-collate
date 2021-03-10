@@ -18,7 +18,7 @@ def collate_comments():
         deliver_comments(file_name, zip_bytes)
 
     except DeliveryError:
-        logger.info("delivery error")
+        logger.error("Delivery error")
 
 
 def get_file_name():
@@ -37,7 +37,7 @@ def create_zip():
 
         workbook = create_excel(survey_id, period, submissions_list)
         filename = f"{k}.xls"
-        logger.info(f"appending {filename} to zip")
+        logger.info(f"Appending {filename} to zip")
         zip_file.append(filename, workbook)
 
     return zip_file.get()
