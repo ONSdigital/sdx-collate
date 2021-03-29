@@ -8,6 +8,10 @@ logger = structlog.get_logger()
 
 
 def fetch_comments() -> dict:
+    """
+    Google datastore query method that retrieves all comments stored prior to current date. Returns a dictionary
+    of "SurveyID_Period" (key), list of comments related to key (value)
+    """
     try:
         logger.info('Fetching comments from Datastore')
         d = date.today()

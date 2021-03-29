@@ -25,6 +25,10 @@ CONFIG = Config(project_id)
 
 
 def cloud_config():
+    """
+    The cloud_config method gives us a way of unit-testing various parts of our code without making GCP Connections.
+    Thus preventing various errors when GitHub actions runs all tests. For example: Permission Denied error
+    """
     logger.info("Loading Cloud Config")
     datastore_client = datastore.Client(project=CONFIG.PROJECT_ID)
     CONFIG.DATASTORE_CLIENT = datastore_client
