@@ -20,6 +20,8 @@ class DeliveryError(Exception):
 
 
 def deliver_comments(file_name: str, zip_file: bytes):
+    print(logger.name)
+    logger.info(logger.name)
     logger.info('Delivering comments')
     file_type = "comments"
     metadata = create_comments_metadata(file_name)

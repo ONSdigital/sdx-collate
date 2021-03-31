@@ -16,10 +16,13 @@ def collate_comments():
     """
     This method brings together (calls) the main functionality of sdx-collate
     """
-    bind_contextvars(app="SDX-Collate")
-    file_name = generate_filename()
-    zip_bytes = create_zip()
-    deliver_comments(file_name, zip_bytes)
+    try:
+        bind_contextvars(app="SDX-Collate")
+        file_name = generate_filename()
+        zip_bytes = create_zip()
+        deliver_comments(file_name, zip_bytes)
+    except DeliveryError:
+        logger.error("Delivery error")
 
 
 def generate_filename():

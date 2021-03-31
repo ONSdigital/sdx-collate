@@ -81,7 +81,7 @@ class TestCollate(unittest.TestCase):
     @patch('app.collate.fetch_comments')
     @patch.object(Session, 'post')
     def test_post_300(self, mock_request, mock_fetch):
-        with pytest.raises(DeliveryError):
-            mock_fetch.return_value = json.loads(test_data)
-            mock_request.return_value.status_code = 550
-            collate_comments()
+        mock_fetch.return_value = json.loads(test_data)
+        mock_request.return_value.status_code = 550
+        collate_comments()
+        self.assertLogs('app.deliver', level='error')
