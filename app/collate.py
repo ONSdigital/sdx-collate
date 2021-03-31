@@ -13,6 +13,9 @@ logger = structlog.get_logger()
 
 
 def collate_comments():
+    """
+    This method brings together (calls) the main functionality of sdx-collate
+    """
     bind_contextvars(app="SDX-Collate")
     file_name = generate_filename()
     zip_bytes = create_zip()
