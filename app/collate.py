@@ -13,14 +13,10 @@ logger = structlog.get_logger()
 
 
 def collate_comments():
-    try:
-        bind_contextvars(app="SDX-Collate")
-        file_name = generate_filename()
-        zip_bytes = create_zip()
-        deliver_comments(file_name, zip_bytes)
-
-    except DeliveryError:
-        logger.error("Delivery error")
+    bind_contextvars(app="SDX-Collate")
+    file_name = generate_filename()
+    zip_bytes = create_zip()
+    deliver_comments(file_name, zip_bytes)
 
 
 def generate_filename():
@@ -33,7 +29,6 @@ def create_zip():
     logger.info('Creating zip file')
     zip_file = InMemoryZip()
     group_dict = fetch_comments()
-    pprint.pprint(group_dict)
     for survey_period, comment_list in group_dict.items():
         survey_id = survey_period[0:3]
         period = survey_period[4:]

@@ -35,6 +35,7 @@ def deliver_comments(file_name: str, zip_file: bytes):
         raise Exception(msg)
     else:
         msg = "Bad response from sdx-deliver"
+        print(status_code)
         logger.error(msg, status_code=status_code)
         raise DeliveryError(msg)
 
