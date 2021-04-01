@@ -4,9 +4,12 @@ import os
 import unittest
 import zipfile
 import pandas
+import pytest
 
+from requests import Session
 from unittest.mock import patch
-from app.collate import create_zip
+from app.collate import create_zip, collate_comments
+from app.deliver import DeliveryError
 
 test_data = '{"187_201605": [{"ru_ref": "123456", "boxes_selected": "91w, 92w1, 92w2", "comment": "I hate covid!", ' \
             '"additional": [{"qcode": "300w", "comment": "I hate covid too!"}, {"qcode": "300m", "comment": "I really ' \
@@ -66,3 +69,19 @@ class TestCollate(unittest.TestCase):
         self.assertEqual(result.iat[1, 8], 'drill hole')
         self.assertEqual(int(result.iat[1, 1]), 201605)
         os.remove('temp/134_201605.xls')
+
+    @patch('app.collate.fetch_comments')
+    @patch.object(Session, 'post')
+    def test_post_400(self, mock_request, mock_fetch):
+        with pytest.raises(Exception):
+            mock_fetch.return_value = json.loads(test_data)
+            mock_request.return_value.status_code = 400
+            collate_comments()
+
+    @patch('app.collate.fetch_comments')
+    @patch.object(Session, 'post')
+    def test_post_300(self, mock_request, mock_fetch):
+        mock_fetch.return_value = json.loads(test_data)
+        mock_request.return_value.status_code = 550
+        collate_comments()
+        self.assertLogs('app.deliver', level='error')
