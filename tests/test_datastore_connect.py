@@ -11,8 +11,7 @@ class TestDataStoreConnect(unittest.TestCase):
     def test_fetch_comments(self, mock_decrypt_comment, mock_config):
         mock_query = Mock()
         mock_query.fetch.return_value = [{
-                'Comment': 'encrypted comment',
-                'encrypted_data': 'value',
+                'encrypted_data': 'encrypted comment',
                 'period': '201817',
                 'survey_id': '019'
             }]
