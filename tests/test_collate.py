@@ -4,7 +4,6 @@ import os
 import unittest
 import zipfile
 import pandas
-import pytest
 
 from requests import Session
 from unittest.mock import patch, MagicMock
@@ -85,9 +84,9 @@ class TestCollate(unittest.TestCase):
             mock_fetch.return_value = json.loads(test_data)
             mock_request.return_value.status_code = 503
             collate_comments()
-        self.assertEqual(actual.output[0], 'ERROR:app.deliver:{"app": "SDX-Collate", "status_code": 503, "event": '
+        self.assertEqual(actual.output[0], 'ERROR:app.deliver:{"status_code": 503, "event": '
                                            '"Bad response from sdx-deliver", "level": "error", "logger": '
-                                           '"app.deliver"}')
+                                           '"app.deliver", "app": "SDX-Collate"}')
 
     @patch('app.collate.fetch_comments')
     @patch('app.deliver.post')
@@ -98,8 +97,8 @@ class TestCollate(unittest.TestCase):
             mock_fetch.return_value = json.loads(test_data)
             mock_post.return_value = mock_post_method
             collate_comments()
-        self.assertEqual(actual.output[1], 'INFO:app.deliver:{"app": "SDX-Collate", "event": "Successfully delivered '
-                                           'comments", "level": "info", "logger": "app.deliver"}')
+        self.assertEqual(actual.output[1], 'INFO:app.deliver:{"event": "Successfully delivered '
+                                           'comments", "level": "info", "logger": "app.deliver", "app": "SDX-Collate"}')
 
     def test_excel_no_comment(self):
         data = [{'ru_ref': '12346789012A', 'boxes_selected': '', 'comment': None, 'additional': []},
