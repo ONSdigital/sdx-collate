@@ -1,8 +1,8 @@
 google-cloud-datastore
-google-cloud-secret-manager
+google-cloud-secret-manager==2.4.0
 google~=3.0.0
-openpyxl==3.0.6
-structlog==20.1.0
+openpyxl==3.0.7
+structlog==21.1.0
 requests==2.25.1
-PyYAML~=5.3.1
-cryptography
+PyYAML~=5.4.1
+cryptography==3.4.7
