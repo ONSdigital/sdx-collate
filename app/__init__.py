@@ -10,8 +10,8 @@ logging_config()
 logger = structlog.get_logger()
 
 project_id = os.getenv('PROJECT_ID', 'ons-sdx-sandbox')
-# DELIVER_SERVICE_URL = "sdx-deliver:80"
-DELIVER_SERVICE_URL = "localhost:5000"
+DELIVER_SERVICE_URL = "sdx-deliver:80"
+
 
 
 class Config:
