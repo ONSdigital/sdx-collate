@@ -8,6 +8,9 @@ logger = structlog.get_logger()
 
 
 def decrypt_comment(comment_token: str) -> dict:
+    """
+    Decrypts comments returned from Datastore query
+    """
     logger.info(f'Decrypting comment using: {CONFIG.DECRYPT_COMMENT_KEY}')
     f = Fernet(CONFIG.DECRYPT_COMMENT_KEY)
     comment_bytes = f.decrypt(comment_token.encode())
