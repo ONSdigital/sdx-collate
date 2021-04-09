@@ -56,5 +56,6 @@ def create_excel(survey_id, period, submission_list):
 
     virtual_workbook = BytesIO()
     workbook.save(virtual_workbook)
+    print(virtual_workbook.getvalue())
 
     return virtual_workbook.getvalue()

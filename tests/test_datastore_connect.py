@@ -16,10 +16,14 @@ class TestDataStoreConnect(unittest.TestCase):
                 'encrypted_data': 'encrypted comment',
                 'period': '201817',
                 'survey_id': '019'
+            }, {
+                'encrypted_data': 'encrypted comment',
+                'period': '201817',
+                'survey_id': '019'
             }]
         mock_decrypt_comment.return_value = "decrypted comment"
 
-        self.assertEqual({'019_201817': ['decrypted comment']}, fetch_comments())
+        self.assertEqual({'019_201817': ['decrypted comment', 'decrypted comment']}, fetch_comments())
 
     @patch('app.datastore_connect.CONFIG')
     @patch('app.datastore_connect.decrypt_comment')
