@@ -28,13 +28,6 @@ class InMemoryZip:
         """Rewind current file position to the start of in memory file"""
         self.in_memory_zip.seek(0)
 
-    def get_filenames(self):
-        """Returns a list of filenames currently in the zipfile"""
-        zf = ZipFile(self.in_memory_zip, "r", ZIP_DEFLATED, False)
-        file_names = zf.namelist()
-        zf.close()
-        return file_names
-
     def get(self):
         self.rewind()
         return self.in_memory_zip

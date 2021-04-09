@@ -7,6 +7,10 @@ logger = structlog.get_logger()
 
 
 def create_excel(survey_id, period, submission_list):
+    """
+    Generates an excel file from the list of comments passed in that relate to the survey_id and period that are also
+    passed in
+    """
     logger.info("Generating Excel file")
     workbook = Workbook()
     row = 2

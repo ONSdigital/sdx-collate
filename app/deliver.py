@@ -20,10 +20,13 @@ class DeliveryError(Exception):
 
 
 def deliver_comments(file_name: str, zip_file: bytes):
+    """
+    Calls the deliver endpoint specified by the output_type parameter.
+    Returns True or raises appropriate error on response.
+    """
     logger.info('Delivering comments')
     file_type = "comments"
-    metadata = create_comments_metadata(file_name)
-    response = post(zip_file, file_type, metadata)
+    response = post(zip_file, file_type, file_name)
     status_code = response.status_code
 
     if status_code == 200:
@@ -39,23 +42,15 @@ def deliver_comments(file_name: str, zip_file: bytes):
         raise DeliveryError(msg)
 
 
-def create_comments_metadata(file_name) -> dict:
-    metadata = {
-        'filename': file_name,
-        'tx_id': file_name,
-        'survey_id': file_name,
-        'description': 'significant changes comments zip',
-        'iteration': file_name
-    }
-    return metadata
-
-
-def post(file_bytes, file_type, metadata):
+def post(file_bytes, file_type, file_name):
+    """
+    Constructs the http call to the deliver service endpoint and posts the request
+    """
     url = f"http://{DELIVER_SERVICE_URL}/deliver/{file_type}"
     logger.info(f"calling {url}")
     try:
         logger.info(f'posting comments to {url}')
-        response = session.post(url, params=metadata, files={DELIVER_NAME: file_bytes})
+        response = session.post(url, params={"filename": file_name}, files={DELIVER_NAME: file_bytes})
     except MaxRetryError:
         logger.error("Max retries exceeded", request_url=url)
         raise DeliveryError("Max retries exceeded")

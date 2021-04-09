@@ -4,12 +4,11 @@ import os
 import unittest
 import zipfile
 import pandas
-import pytest
 
 from requests import Session
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from app.collate import create_zip, collate_comments
-from app.deliver import DeliveryError
+from app.excel import create_excel
 
 test_data = '{"187_201605": [{"ru_ref": "123456", "boxes_selected": "91w, 92w1, 92w2", "comment": "I hate covid!", ' \
             '"additional": [{"qcode": "300w", "comment": "I hate covid too!"}, {"qcode": "300m", "comment": "I really ' \
@@ -73,15 +72,41 @@ class TestCollate(unittest.TestCase):
     @patch('app.collate.fetch_comments')
     @patch.object(Session, 'post')
     def test_post_400(self, mock_request, mock_fetch):
-        with pytest.raises(Exception):
+        with self.assertRaises(Exception):
             mock_fetch.return_value = json.loads(test_data)
             mock_request.return_value.status_code = 400
             collate_comments()
 
     @patch('app.collate.fetch_comments')
     @patch.object(Session, 'post')
-    def test_post_300(self, mock_request, mock_fetch):
-        mock_fetch.return_value = json.loads(test_data)
-        mock_request.return_value.status_code = 550
-        collate_comments()
-        self.assertLogs('app.deliver', level='error')
+    def test_post_503(self, mock_request, mock_fetch):
+        with self.assertLogs('app.deliver', level='ERROR') as actual:
+            mock_fetch.return_value = json.loads(test_data)
+            mock_request.return_value.status_code = 503
+            collate_comments()
+        self.assertEqual(actual.output[0], 'ERROR:app.deliver:{"status_code": 503, "event": '
+                                           '"Bad response from sdx-deliver", "level": "error", "logger": '
+                                           '"app.deliver", "app": "SDX-Collate"}')
+
+    @patch('app.collate.fetch_comments')
+    @patch('app.deliver.post')
+    def test_post_200(self, mock_post, mock_fetch):
+        with self.assertLogs('app.deliver', level='INFO') as actual:
+            mock_post_method = MagicMock()
+            mock_post_method.status_code = 200
+            mock_fetch.return_value = json.loads(test_data)
+            mock_post.return_value = mock_post_method
+            collate_comments()
+        self.assertEqual(actual.output[1], 'INFO:app.deliver:{"event": "Successfully delivered '
+                                           'comments", "level": "info", "logger": "app.deliver", "app": "SDX-Collate"}')
+
+    def test_excel_no_comment(self):
+        data = [{'ru_ref': '12346789012A', 'boxes_selected': '', 'comment': None, 'additional': []},
+                {'ru_ref': '12346789012A', 'boxes_selected': '', 'comment': 'I am a comment', 'additional': []}]
+        with self.assertLogs('app.excel', level='INFO') as actual:
+            create_excel('019', '20181', data)
+        self.assertEqual(actual.output[1], 'INFO:app.excel:{"event": "1 out of 2 submissions had comments", '
+                                           '"level": "info", "logger": "app.excel"}')
+
+
+
