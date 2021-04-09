@@ -41,7 +41,7 @@ Collate reads comments out of GCP Datastore under the **'Comments'** entity.
 | survey_id       | Survey ID                    | `survey_id: 017`
 
 #### Secret Manager
-Decrypt comment key is managed by Google Secret Manager. A single API call is made on program startup
+`sdx-comment-key` is managed by Google Secret Manager. A single API call is made on program startup
 and stored in `DECRYPT_COMMENT_KEY`. The default value is the test key.
 
 ## Configuration

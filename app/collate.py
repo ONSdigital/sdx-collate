@@ -1,3 +1,5 @@
+import pprint
+
 import structlog
 
 from datetime import datetime
@@ -11,17 +13,19 @@ logger = structlog.get_logger()
 
 
 def collate_comments():
+    """
+    This method brings together (calls) the main functionality of sdx-collate
+    """
     try:
-        bind_contextvars(app="SDX-Worker")
-        file_name = get_file_name()
+        bind_contextvars(app="SDX-Collate")
+        file_name = generate_filename()
         zip_bytes = create_zip()
         deliver_comments(file_name, zip_bytes)
-
     except DeliveryError:
-        logger.info("delivery error")
+        logger.error("Delivery error")
 
 
-def get_file_name():
+def generate_filename():
     logger.info('Getting filename')
     date_time = datetime.utcnow()
     return f"{date_time.strftime('%Y-%m-%d')}.zip"
@@ -31,13 +35,13 @@ def create_zip():
     logger.info('Creating zip file')
     zip_file = InMemoryZip()
     group_dict = fetch_comments()
-    for k, submissions_list in group_dict.items():
-        survey_id = k[0:3]
-        period = k[4:]
+    for survey_period, comment_list in group_dict.items():
+        survey_id = survey_period[0:3]
+        period = survey_period[4:]
 
-        workbook = create_excel(survey_id, period, submissions_list)
-        filename = f"{k}.xls"
-        logger.info(f"appending {filename} to zip")
+        workbook = create_excel(survey_id, period, comment_list)
+        filename = f"{survey_period}.xls"
+        logger.info(f"Appending {filename} to zip")
         zip_file.append(filename, workbook)
 
     return zip_file.get()
