@@ -5,6 +5,12 @@ logger = structlog.get_logger()
 
 
 def get_secret(project_id, secret_id):
+    """
+    SDX's secrets are managed by Google Secret Manager.
+    This method provides a way of retrieving a specific secret.
+    The project id is passed as a parameter to allow for cases where the
+    Secret Manager is not located in the same project as the service.
+    """
     logger.info('Getting secrets from Secret Manager')
 
     version_id = 'latest'
