@@ -1,6 +1,6 @@
-pandas
-pytest
-pytest-cov
-numpy
-xls2xlsx
-xlrd
+pandas==1.2.4
+pytest==6.2.3
+pytest-cov==2.11.1
+numpy==1.20.2
+xls2xlsx==0.1.5
+xlrd==2.0.1
