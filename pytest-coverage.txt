@@ -1,0 +1,82 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.8.6, pytest-6.2.3, py-1.10.0, pluggy-0.13.1
+rootdir: /Users/tomholroyd/sdx-gcp/sdx-collate
+plugins: cov-2.11.1
+collected 18 items
+
+tests/test_collate.py .....F.F                                           [ 44%]
+tests/test_datastore_connect.py ..                                       [ 55%]
+tests/test_decrypt.py ...                                                [ 72%]
+tests/test_deliver.py ..                                                 [ 83%]
+tests/test_init.py ...                                                   [100%]
+
+=================================== FAILURES ===================================
+__________________________ TestCollate.test_post_200 ___________________________
+
+self = <tests.test_collate.TestCollate testMethod=test_post_200>
+mock_post = <MagicMock name='post' id='4905843536'>
+mock_fetch = <MagicMock name='fetch_comments' id='4905939824'>
+
+    @patch('app.collate.fetch_comments')
+    @patch('app.deliver.post')
+    def test_post_200(self, mock_post, mock_fetch):
+        with self.assertLogs('app.deliver', level='INFO') as actual:
+            mock_post_method = MagicMock()
+            mock_post_method.status_code = 200
+            mock_fetch.return_value = json.loads(test_data)
+            mock_post.return_value = mock_post_method
+            collate_comments()
+>       self.assertEqual(actual.output[1], 'INFO:app.deliver:{"app": "SDX-Collate", "event": "Successfully delivered '
+                                           'comments", "level": "info", "logger": "app.deliver"}')
+E       AssertionError: 'INFO:app.deliver:{"event": "Successfully delivered comments"[61 chars]te"}' != 'INFO:app.deliver:{"app": "SDX-Collate", "event": "Successful[61 chars]er"}'
+E       - INFO:app.deliver:{"event": "Successfully delivered comments", "level": "info", "logger": "app.deliver", "app": "SDX-Collate"}
+E       ?                                                                                                       ----------------------
+E       + INFO:app.deliver:{"app": "SDX-Collate", "event": "Successfully delivered comments", "level": "info", "logger": "app.deliver"}
+E       ?                    ++++++++++++++++++++++
+
+tests/test_collate.py:100: AssertionError
+__________________________ TestCollate.test_post_503 ___________________________
+
+self = <tests.test_collate.TestCollate testMethod=test_post_503>
+mock_request = <MagicMock name='post' id='4905069872'>
+mock_fetch = <MagicMock name='fetch_comments' id='4905592288'>
+
+    @patch('app.collate.fetch_comments')
+    @patch.object(Session, 'post')
+    def test_post_503(self, mock_request, mock_fetch):
+        with self.assertLogs('app.deliver', level='ERROR') as actual:
+            mock_fetch.return_value = json.loads(test_data)
+            mock_request.return_value.status_code = 503
+            collate_comments()
+>       self.assertEqual(actual.output[0], 'ERROR:app.deliver:{"app": "SDX-Collate", "status_code": 503, "event": '
+                                           '"Bad response from sdx-deliver", "level": "error", "logger": '
+                                           '"app.deliver"}')
+E       AssertionError: 'ERROR:app.deliver:{"status_code": 503, "event": "Bad response[80 chars]te"}' != 'ERROR:app.deliver:{"app": "SDX-Collate", "status_code": 503, [80 chars]er"}'
+E       - ERROR:app.deliver:{"status_code": 503, "event": "Bad response from sdx-deliver", "level": "error", "logger": "app.deliver", "app": "SDX-Collate"}
+E       ?                                                                                                                           ----------------------
+E       + ERROR:app.deliver:{"app": "SDX-Collate", "status_code": 503, "event": "Bad response from sdx-deliver", "level": "error", "logger": "app.deliver"}
+E       ?                     ++++++++++++++++++++++
+
+tests/test_collate.py:87: AssertionError
+------------------------------ Captured log call -------------------------------
+ERROR    app.collate:collate.py:31 {"event": "Delivery error", "level": "error", "logger": "app.collate", "app": "SDX-Collate"}
+
+---------- coverage: platform darwin, python 3.8.6-final-0 -----------
+Name                       Stmts   Miss  Cover
+----------------------------------------------
+app/__init__.py               20      0   100%
+app/collate.py                33      0   100%
+app/datastore_connect.py      24      0   100%
+app/decrypt.py                10      0   100%
+app/deliver.py                42      0   100%
+app/excel.py                  47      0   100%
+app/in_memory_zip.py          18      0   100%
+app/logger.py                 20      0   100%
+app/secret_manager.py         11      0   100%
+----------------------------------------------
+TOTAL                        225      0   100%
+
+=========================== short test summary info ============================
+FAILED tests/test_collate.py::TestCollate::test_post_200 - AssertionError: 'I...
+FAILED tests/test_collate.py::TestCollate::test_post_503 - AssertionError: 'E...
+======================== 2 failed, 16 passed in 11.56s =========================
