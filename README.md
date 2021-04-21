@@ -21,7 +21,7 @@ $ make build
 ```
 
 Testing:
-ensure you have installed all requirements with above `make build` command then:
+Install all test requirements and run tests:
 ```shell
 $ make test
 ```
