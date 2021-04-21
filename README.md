@@ -10,13 +10,18 @@ stored **prior to the current date** will be decrypted, added to an in-memory Ex
 `HTTP <POST>` request.
 
 ## Getting started
-Install requirements:
+Install pipenv:
+```shell
+$ pip install pipenv
+```
+
+Create a virtualenv and install dependencies
 ```shell
 $ make build
 ```
 
 Testing:
-ensure you have installed all requirements with above `make build` command then:
+Install all test requirements and run tests:
 ```shell
 $ make test
 ```
