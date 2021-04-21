@@ -3,5 +3,5 @@ COPY . /app
 WORKDIR /app
 RUN python -m pip install --upgrade pip
 RUN pip install pipenv
-RUN pipenv install --system --deploy --ignore-pipfile
+RUN pipenv install --deploy --ignore-pipfile
 CMD ["pipenv", "run", "python", "./run.py"]
