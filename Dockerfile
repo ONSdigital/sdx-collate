@@ -1,5 +1,7 @@
 FROM python:3.8-slim
 COPY . /app
 WORKDIR /app
-RUN pip install --no-cache-dir -U -r /app/requirements.txt
-CMD ["python", "./run.py"]
+RUN pip3 install pipenv && pipenv install --deploy --system
+
+ENTRYPOINT ["python3"]
+CMD ["run.py"]

@@ -1,7 +1,7 @@
 build:
-	pip install -r requirements.txt
+	pipenv install
 start:
-	python run.py
+	pipenv run python run.py
 test:
-	pip install -r test_requirements.txt ; \
+	pipenv install --dev ; \
 	pytest --cov-report term-missing --cov=app tests/
