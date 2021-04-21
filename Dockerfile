@@ -1,7 +1,6 @@
 FROM python:3.8-slim
 COPY . /app
 WORKDIR /app
-RUN pip3 install pipenv && pipenv install --deploy --system
-
-ENTRYPOINT ["python3"]
-CMD ["run.py"]
+RUN python -m pip install --upgrade pip
+RUN pip install pipenv && pipenv install --deploy --ignore-pipfile
+CMD ["pipenv", "run", "python", "./run.py"]
