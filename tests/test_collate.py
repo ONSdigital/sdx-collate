@@ -80,25 +80,20 @@ class TestCollate(unittest.TestCase):
     @patch('app.collate.fetch_comments')
     @patch.object(Session, 'post')
     def test_post_503(self, mock_request, mock_fetch):
-        with self.assertLogs('app.deliver', level='ERROR') as actual:
+        with self.assertLogs('app.deliver', level='ERROR'):
             mock_fetch.return_value = json.loads(test_data)
             mock_request.return_value.status_code = 503
             collate_comments()
-        self.assertEqual(actual.output[0], 'ERROR:app.deliver:{"status_code": 503, "event": '
-                                           '"Bad response from sdx-deliver", "level": "error", "logger": '
-                                           '"app.deliver", "app": "SDX-Collate"}')
 
     @patch('app.collate.fetch_comments')
     @patch('app.deliver.post')
     def test_post_200(self, mock_post, mock_fetch):
-        with self.assertLogs('app.deliver', level='INFO') as actual:
+        with self.assertLogs('app.deliver', level='INFO'):
             mock_post_method = MagicMock()
             mock_post_method.status_code = 200
             mock_fetch.return_value = json.loads(test_data)
             mock_post.return_value = mock_post_method
             collate_comments()
-        self.assertEqual(actual.output[1], 'INFO:app.deliver:{"event": "Successfully delivered '
-                                           'comments", "level": "info", "logger": "app.deliver", "app": "SDX-Collate"}')
 
     def test_excel_no_comment(self):
         data = [{'ru_ref': '12346789012A', 'boxes_selected': '', 'comment': None, 'additional': []},
@@ -107,6 +102,3 @@ class TestCollate(unittest.TestCase):
             create_excel('019', '20181', data)
         self.assertEqual(actual.output[1], 'INFO:app.excel:{"event": "1 out of 2 submissions had comments", '
                                            '"level": "info", "logger": "app.excel"}')
-
-
-

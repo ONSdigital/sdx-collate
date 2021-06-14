@@ -1,6 +1,0 @@
-pandas
-pytest
-pytest-cov
-numpy
-xls2xlsx
-xlrd
