@@ -1,10 +1,9 @@
-import pprint
-
 import structlog
 
 from datetime import datetime
 from structlog.contextvars import bind_contextvars
-from app.datastore_connect import fetch_comments
+from app.datastore_connect import get_kinds, get_data_for_kind
+from app.decrypt import decrypt_comment
 from app.deliver import deliver_comments, DeliveryError
 from app.excel import create_excel
 from app.in_memory_zip import InMemoryZip
@@ -46,13 +45,17 @@ def create_zip():
     """
     logger.info('Creating zip file')
     zip_file = InMemoryZip()
-    group_dict = fetch_comments()
-    for survey_period, comment_list in group_dict.items():
-        survey_id = survey_period[0:3]
-        period = survey_period[4:]
-
+    kinds = get_kinds()
+    for k in kinds:
+        survey_id = k[0:3]
+        period = k[4:]
+        # get the list of encrypted data for this kind
+        encrypted_data_list = get_data_for_kind(k)
+        # decrypt the data in the list
+        comment_list = [decrypt_comment(c) for c in encrypted_data_list]
+        # create the workbook
         workbook = create_excel(survey_id, period, comment_list)
-        filename = f"{survey_period}.xls"
+        filename = f"{k}.xls"
         logger.info(f"Appending {filename} to zip")
         zip_file.append(filename, workbook)
 

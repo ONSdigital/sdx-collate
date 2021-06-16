@@ -4,33 +4,23 @@ from datetime import date, datetime
 from app import CONFIG
 from app.decrypt import decrypt_comment
 
+
 logger = structlog.get_logger()
 
 
-def fetch_comments() -> dict:
-    """
-    Google datastore query method that retrieves all comments stored prior to current date. Returns a dictionary
-    of "SurveyID_Period" (key): <list> of comments related to key (value)
-    """
+def get_kinds() -> list:
     try:
-        logger.info('Fetching comments from Datastore')
-        d = date.today()
-        today = datetime(d.year, d.month, d.day)
-        query = CONFIG.DATASTORE_CLIENT.query(kind='Comment')
-        query.add_filter("created", "<", str(today))
-        results = query.fetch()
+        query = CONFIG.DATASTORE_CLIENT.query(kind="__kind__")
+        query.keys_only()
+        return [entity.key.id_or_name for entity in query.fetch() if not entity.key.id_or_name.startswith("_")]
+    except Exception as e:
+        logger.error(f'Datastore: {e}')
 
-        logger.info('Sorting query results')
-        group_dict = {}
-        for entity in results:
-            key = f"{entity['survey_id']}_{entity['period']}"
-            value = decrypt_comment(entity['encrypted_data'])
-            if key in group_dict.keys():
-                group_dict[key].append(value)
-            else:
-                group_dict[key] = [value]
 
-        return group_dict
-
+def get_data_for_kind(kind: str) -> list:
+    try:
+        query = CONFIG.DATASTORE_CLIENT.query(kind=kind)
+        query.projection = ["encrypted_data"]
+        return [entity["encrypted_data"] for entity in query.fetch()]
     except Exception as e:
         logger.error(f'Datastore: {e}')
