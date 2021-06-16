@@ -47,8 +47,7 @@ def create_zip():
     zip_file = InMemoryZip()
     kinds = fetch_comment_kinds()
     for k in kinds:
-        survey_id = k[0:3]
-        period = k[4:]
+        survey_id, _, period = k.partition('_')
         # get the list of encrypted data for this kind
         encrypted_data_list = fetch_data_for_kind(k)
         # decrypt the data in the list
