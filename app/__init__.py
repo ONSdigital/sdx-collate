@@ -13,7 +13,6 @@ project_id = os.getenv('PROJECT_ID', 'ons-sdx-sandbox')
 DELIVER_SERVICE_URL = "sdx-deliver:80"
 
 
-
 class Config:
 
     def __init__(self, proj_id) -> None:
