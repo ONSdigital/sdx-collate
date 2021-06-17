@@ -54,7 +54,7 @@ and stored in `DECRYPT_COMMENT_KEY`. The default value is the test key.
 |-------------------------|------------------------------------
 | PROJECT_ID              | Name of project
 | DECRYPT_COMMENT_KEY     | Key used to decrypt comments
-| DELIVER_SERVICE_URL     | URL of sdx-deliver service: `deliver/comments`
+| DELIVER_SERVICE_URL     | URL of sdx-deliver service: `sdx-deliver:80`
 | DATASTORE_CLIENT        | Datastore Client for Reading comments out of GCP
 
 ## License
