@@ -1,35 +1,57 @@
-import builtins
 import unittest
 
 from unittest.mock import patch, Mock
-from app.datastore_connect import fetch_comments
+
+from app.datastore_connect import fetch_comment_kinds, fetch_data_for_kind
+
+
+class MockKeyEntity:
+
+    def __init__(self, key=None) -> None:
+        m = Mock()
+        m.id_or_name = key
+        self.key = m
+
+
+def mock_data_entity(data):
+    return {"encrypted_data": data}
 
 
 class TestDataStoreConnect(unittest.TestCase):
 
     @patch('app.datastore_connect.CONFIG')
-    @patch('app.datastore_connect.decrypt_comment')
-    def test_fetch_comments(self, mock_decrypt_comment, mock_config):
+    def test_fetch_comment_kinds(self, mock_config):
         mock_query = Mock()
-        mock_query = mock_config.DATASTORE_CLIENT.query.return_value
-        mock_query.fetch.return_value = [{
-                'encrypted_data': 'encrypted comment',
-                'period': '201817',
-                'survey_id': '019'
-            }, {
-                'encrypted_data': 'encrypted comment',
-                'period': '201817',
-                'survey_id': '019'
-            }]
-        mock_decrypt_comment.return_value = "decrypted comment"
-
-        self.assertEqual({'019_201817': ['decrypted comment', 'decrypted comment']}, fetch_comments())
+        mock_config.DATASTORE_CLIENT.query.return_value = mock_query
+        mock_query.fetch.return_value = [
+            MockKeyEntity('009_2020'),
+            MockKeyEntity('009_2021'),
+            MockKeyEntity('023_201817'),
+            MockKeyEntity('__non_comment_kind__'),
+            MockKeyEntity('__datastore_metadata__')
+        ]
+        self.assertEqual(['009_2020', '009_2021', '023_201817'], fetch_comment_kinds())
 
     @patch('app.datastore_connect.CONFIG')
-    @patch('app.datastore_connect.decrypt_comment')
-    @patch('app.datastore_connect.fetch_comments')
-    def test_fetch_comments_fail(self, mock_append, mock_decrypt_comment, mock_config):
-        mock_query = Mock()
+    def test_fetch_comment_kinds_fail(self, mock_config):
         mock_config.DATASTORE_CLIENT.query.return_value = Exception()
-        fetch_comments()
-        mock_decrypt_comment.assert_not_called()
+        with self.assertRaises(Exception):
+            fetch_comment_kinds()
+
+    @patch('app.datastore_connect.CONFIG')
+    def test_fetch_data_for_kind(self, mock_config):
+        mock_query = Mock()
+        mock_config.DATASTORE_CLIENT.query.return_value = mock_query
+        mock_query.fetch.return_value = [
+            mock_data_entity('12345'),
+            mock_data_entity('abcde'),
+            mock_data_entity('1a2b3c'),
+        ]
+        self.assertEqual(['12345', 'abcde', '1a2b3c'], fetch_data_for_kind('009_2020'))
+
+    @patch('app.datastore_connect.CONFIG')
+    def test_fetch_data_for_kind_fail(self, mock_config):
+        mock_query = Mock()
+        mock_config.DATASTORE_CLIENT.query.return_value = mock_query
+        with self.assertRaises(Exception):
+            fetch_data_for_kind('')
