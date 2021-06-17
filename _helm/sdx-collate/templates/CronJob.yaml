@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: sdx-collate
 spec:
-  schedule: 0 16 * * 1-5
+  schedule: 0 6 * * 1-5
   jobTemplate:
     spec:
       template:

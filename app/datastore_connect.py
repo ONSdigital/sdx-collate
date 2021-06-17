@@ -1,36 +1,36 @@
 import structlog
 
-from datetime import date, datetime
 from app import CONFIG
-from app.decrypt import decrypt_comment
+
 
 logger = structlog.get_logger()
 
 
-def fetch_comments() -> dict:
+def fetch_comment_kinds() -> list:
     """
-    Google datastore query method that retrieves all comments stored prior to current date. Returns a dictionary
-    of "SurveyID_Period" (key): <list> of comments related to key (value)
+        Fetch a list of all comment kinds from datastore.
+        Each kind is represented by {survey_id}_{period}
     """
     try:
-        logger.info('Fetching comments from Datastore')
-        d = date.today()
-        today = datetime(d.year, d.month, d.day)
-        query = CONFIG.DATASTORE_CLIENT.query(kind='Comment')
-        query.add_filter("created", "<", str(today))
-        results = query.fetch()
-
-        logger.info('Sorting query results')
-        group_dict = {}
-        for entity in results:
-            key = f"{entity['survey_id']}_{entity['period']}"
-            value = decrypt_comment(entity['encrypted_data'])
-            if key in group_dict.keys():
-                group_dict[key].append(value)
-            else:
-                group_dict[key] = [value]
-
-        return group_dict
-
+        query = CONFIG.DATASTORE_CLIENT.query(kind="__kind__")
+        query.keys_only()
+        return [entity.key.id_or_name for entity in query.fetch() if not entity.key.id_or_name.startswith("_")]
     except Exception as e:
-        logger.error(f'Datastore: {e}')
+        logger.error(f'Datastore error fetching kinds: {e}')
+        raise e
+
+
+def fetch_data_for_kind(kind: str) -> list:
+    """
+        Returns a list of the encrypted data field from each entity within the given kind
+    """
+    try:
+        if kind is None or kind == '':
+            raise Exception(f'Invalid value for kind {kind}')
+        query = CONFIG.DATASTORE_CLIENT.query(kind=kind)
+        query.projection = ["encrypted_data"]
+        return [entity["encrypted_data"] for entity in query.fetch()]
+    except Exception as e:
+        logger.error(f'Datastore error fetching data: {e}')
+        print(e)
+        raise e
