@@ -11,7 +11,7 @@ def decrypt_comment(comment_token: str) -> dict:
     """
     Decrypts comments returned from Datastore query
     """
-    logger.info(f'Decrypting comment using: {CONFIG.DECRYPT_COMMENT_KEY}')
+    logger.info('Decrypting comment')
     f = Fernet(CONFIG.DECRYPT_COMMENT_KEY)
     comment_bytes = f.decrypt(comment_token.encode())
     return json.loads(comment_bytes.decode())
