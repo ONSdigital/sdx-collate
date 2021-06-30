@@ -12,6 +12,7 @@ structlog = "==21.1.0"
 requests = "==2.25.1"
 cryptography = "==3.4.7"
 PyYAML = "==5.4.1"
+urllib3 = "==1.26.6"
 
 [dev-packages]
 pandas = "==1.2.4"
