@@ -4,6 +4,7 @@ metadata:
   name: sdx-collate
 spec:
   schedule: 0 6 * * 1-5
+  suspend: false
   jobTemplate:
     spec:
       template:
