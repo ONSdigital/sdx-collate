@@ -54,7 +54,7 @@ def create_zip():
         comment_list = [decrypt_comment(c) for c in encrypted_data_list]
         # create the workbook
         workbook = create_excel(survey_id, period, comment_list)
-        filename = f"{k}.xls"
+        filename = f"{k}.xlsx"
         logger.info(f"Appending {filename} to zip")
         zip_file.append(filename, workbook)
 

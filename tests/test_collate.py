@@ -44,12 +44,12 @@ class TestCollate(unittest.TestCase):
 
         z = zipfile.ZipFile(actual, "r")
         z.extractall('temp')
-        result = pandas.read_excel('temp/187_201605.xls')
+        result = pandas.read_excel('temp/187_201605.xlsx')
 
         self.assertEqual(result.iat[1, 3], 'I hate covid!')
         self.assertEqual(result.iat[1, 2], '91w, 92w1, 92w2')
         self.assertEqual(int(result.iat[1, 1]), 201605)
-        os.remove('temp/187_201605.xls')
+        os.remove('temp/187_201605.xlsx')
 
     @patch('app.collate.fetch_comment_kinds')
     @patch('app.collate.fetch_data_for_kind')
@@ -72,7 +72,7 @@ class TestCollate(unittest.TestCase):
 
         z = zipfile.ZipFile(actual, "r")
         z.extractall('temp')
-        result = pandas.read_excel('temp/134_201605.xls')
+        result = pandas.read_excel('temp/134_201605.xlsx')
 
         self.assertEqual(result.iat[1, 2], '91w, 95w, 96w, 97w, 91f, 95f, 96f, 97f, 191m, 195m, 196m, 197m, 191w4, '
                                            '195w4, 196w4, 197w4, 191w5, 195w5, 196w5, 197w5, ')
@@ -83,7 +83,7 @@ class TestCollate(unittest.TestCase):
         self.assertEqual(result.iat[1, 7], 'solder joint')
         self.assertEqual(result.iat[1, 8], 'drill hole')
         self.assertEqual(int(result.iat[1, 1]), 201605)
-        os.remove('temp/134_201605.xls')
+        os.remove('temp/134_201605.xlsx')
 
     @patch('app.collate.fetch_comment_kinds')
     @patch('app.collate.fetch_data_for_kind')
