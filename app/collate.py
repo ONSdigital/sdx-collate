@@ -36,7 +36,7 @@ def generate_filename():
     """
     logger.info('Getting filename')
     date_time = datetime.utcnow()
-    return f"{date_time.strftime('%Y-%m-%d')}.zip"
+    return f"{date_time.strftime('%Y-%m-%d_%H-%M-%S')}.zip"
 
 
 def create_zip():
