@@ -3,6 +3,8 @@ import structlog
 from openpyxl import Workbook
 from io import BytesIO
 
+from openpyxl.utils.exceptions import IllegalCharacterError
+
 logger = structlog.get_logger()
 
 
@@ -44,7 +46,11 @@ def create_excel(survey_id, period, submission_list):
                     ws.cell(row, 9, addition['comment'])
 
         ws.cell(row, 3, boxes_selected)
-        ws.cell(row, 4, comment)
+        try:
+            ws.cell(row, 4, comment)
+        except IllegalCharacterError:
+            logger.info(f"Comment with illegal character found")
+            ws.cell(row, 4, 'This comment contained ASCII characters that are not printable')
 
     ws.cell(1, 1, f"Survey ID: {survey_id}")
     ws.cell(1, 2, f"Comments found: {surveys_with_comments_count}")
