@@ -1,8 +1,10 @@
+from typing import List, Dict
+
 import structlog
 
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from structlog.contextvars import bind_contextvars
-from app.datastore_connect import fetch_comment_kinds, fetch_data_for_kind
+from app.datastore_connect import fetch_comment_kinds, fetch_data_for_kind, fetch_data_for_survey
 from app.decrypt import decrypt_comment
 from app.deliver import deliver_comments, DeliveryError
 from app.excel import create_excel
@@ -45,11 +47,13 @@ def create_zip():
     """
     logger.info('Creating zip file')
     zip_file = InMemoryZip()
+    # set the cutoff date as 90 days prior to today
+    cutoff_date = get_datetime(90)
     kinds = fetch_comment_kinds()
     for k in kinds:
         survey_id, _, period = k.partition('_')
         # get the list of encrypted data for this kind
-        encrypted_data_list = fetch_data_for_kind(k)
+        encrypted_data_list = fetch_data_for_kind(k, op='>=', cutoff_date=cutoff_date)
         # decrypt the data in the list
         comment_list = [decrypt_comment(c) for c in encrypted_data_list]
         # create the workbook
@@ -58,4 +62,33 @@ def create_zip():
         logger.info(f"Appending {filename} to zip")
         zip_file.append(filename, workbook)
 
+    daily_dict = get_daily_dict(kinds)
+
+    yesterday = get_datetime(1)
+    for survey_id, period_list in daily_dict.items():
+        encrypted_data_dict = fetch_data_for_survey(survey_id, period_list, op='=', cutoff_date=yesterday)
+
+        # TODO decrypt data
+        # create .xlsx file
+        # append to zip
+
     return zip_file.get()
+
+
+def get_daily_dict(kinds: List[str]) -> Dict:
+    daily_dict = {}
+    for k in kinds:
+
+        survey_id, _, period = k.partition('_')
+
+        if survey_id not in daily_dict:
+            daily_dict[survey_id] = [period]
+        daily_dict[survey_id].append(period)
+
+    return daily_dict
+
+
+def get_datetime(no_days_previous: int):
+    d = date.today()
+    today = datetime(d.year, d.month, d.day)
+    return today - timedelta(no_days_previous)
