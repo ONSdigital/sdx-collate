@@ -1,7 +1,9 @@
+import datetime
 import unittest
 
 from unittest.mock import patch, Mock
 
+from app.collate import get_datetime
 from app.datastore_connect import fetch_comment_kinds, fetch_data_for_kind
 
 
@@ -47,7 +49,7 @@ class TestDataStoreConnect(unittest.TestCase):
             mock_data_entity('abcde'),
             mock_data_entity('1a2b3c'),
         ]
-        self.assertEqual(['12345', 'abcde', '1a2b3c'], fetch_data_for_kind('009_2020'))
+        self.assertEqual(['12345', 'abcde', '1a2b3c'], fetch_data_for_kind('009_2020', ">=", get_datetime(90)))
 
     @patch('app.datastore_connect.CONFIG')
     def test_fetch_data_for_kind_fail(self, mock_config):

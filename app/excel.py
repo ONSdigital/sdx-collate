@@ -4,54 +4,30 @@ from openpyxl import Workbook
 from io import BytesIO
 
 from openpyxl.utils.exceptions import IllegalCharacterError
+from openpyxl.worksheet.worksheet import Worksheet
+
+from app.submission import Submission
 
 logger = structlog.get_logger()
 
 
-def create_excel(survey_id, period, submission_list):
+def create_excel(survey_id, submission_list):
     """
-    Generates an excel file from the list of comments passed in that relate to the survey_id and period that are also
-    passed in
+    Generates an excel file from the list of comments passed in that relate to the given survey_id and period
     """
     logger.info("Generating Excel file")
     workbook = Workbook()
-    row = 2
+    row_index = 3
     surveys_with_comments_count = 0
     ws = workbook.active
 
     for submission in submission_list:
-        comment = submission["comment"]
+        if submission.has_comment():
+            add_row(ws, row_index, survey_id, submission)
+            row_index += 1
+            surveys_with_comments_count += 1
 
-        boxes_selected = submission["boxes_selected"]
-
-        if not comment:
-            continue
-        row += 1
-        surveys_with_comments_count += 1
-        ws.cell(row, 1, submission['ru_ref'])
-        ws.cell(row, 2, period)
-
-        if survey_id == '134':
-            additional_list = submission["additional"]
-            for addition in additional_list:
-                if addition['qcode'] == '300w':
-                    ws.cell(row, 5, addition['comment'])
-                if addition['qcode'] == '300f':
-                    ws.cell(row, 6, addition['comment'])
-                if addition['qcode'] == '300m':
-                    ws.cell(row, 7, addition['comment'])
-                if addition['qcode'] == '300w4':
-                    ws.cell(row, 8, addition['comment'])
-                if addition['qcode'] == '300w5':
-                    ws.cell(row, 9, addition['comment'])
-
-        ws.cell(row, 3, boxes_selected)
-        try:
-            ws.cell(row, 4, comment)
-        except IllegalCharacterError:
-            logger.info(f"Comment with illegal character found")
-            ws.cell(row, 4, 'This comment contained ASCII characters that are not printable')
-
+    # header
     ws.cell(1, 1, f"Survey ID: {survey_id}")
     ws.cell(1, 2, f"Comments found: {surveys_with_comments_count}")
     if survey_id == '134':
@@ -68,3 +44,22 @@ def create_excel(survey_id, period, submission_list):
     workbook.save(virtual_workbook)
 
     return virtual_workbook.getvalue()
+
+
+def add_row(ws: Worksheet, row_index: int, survey_id: str, submission: Submission):
+
+    ws.cell(row_index, 1, submission.ru_ref)
+    ws.cell(row_index, 2, submission.period)
+
+    additional_mappings = {'300w': 5, '300f': 6, '300m': 7, '300w4': 8, '300w5': 9}
+    if survey_id == '134':
+        for qcode, additional_comment in submission.additional.items():
+            if qcode in additional_mappings:
+                ws.cell(row_index, additional_mappings[qcode], additional_comment)
+
+    ws.cell(row_index, 3, submission.boxes_selected)
+    try:
+        ws.cell(row_index, 4, submission.comment)
+    except IllegalCharacterError:
+        logger.info(f"Comment with illegal character found")
+        ws.cell(row_index, 4, 'This comment contained ASCII characters that are not printable')

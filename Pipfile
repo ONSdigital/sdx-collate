@@ -14,6 +14,7 @@ cryptography = "==3.4.7"
 PyYAML = "==5.4.1"
 urllib3 = "==1.26.6"
 pillow = "==8.3.2"
+pandas = "==1.4.1"
 
 [dev-packages]
 pandas = "==1.2.4"
