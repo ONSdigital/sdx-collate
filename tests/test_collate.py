@@ -57,13 +57,13 @@ class TestCollate(unittest.TestCase):
 
         z = zipfile.ZipFile(actual, "r")
         z.extractall('temp')
-        result = pandas.read_excel('temp/009-daily.xlsx', header=None)
+        result = pandas.read_excel('temp/009-daily.xlsx')
 
-        self.assertEqual(int(result.iat[2, 1]), 2105)
+        self.assertEqual(int(result.iat[1, 1]), 2105)
+        self.assertEqual(result.iat[1, 3], "My Comment")
+
+        self.assertEqual(int(result.iat[2, 1]), 2106)
         self.assertEqual(result.iat[2, 3], "My Comment")
-
-        self.assertEqual(int(result.iat[3, 1]), 2106)
-        self.assertEqual(result.iat[3, 3], "My Comment")
 
     @patch('app.collate.fetch_comment_kinds')
     @patch('app.collate.fetch_data_for_kind')
