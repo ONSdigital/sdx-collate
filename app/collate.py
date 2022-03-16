@@ -71,14 +71,17 @@ def create_zip():
     yesterday = get_datetime(1)
     for survey_id, period_list in daily_dict.items():
         encrypted_data_dict = fetch_data_for_survey(survey_id, period_list, op='=', cutoff_date=yesterday)
+        submission_list = []
         for period, encrypted_data_list in encrypted_data_dict.items():
             # decrypt the data in the list and convert to Submission
-            submission_list = [Submission(period, decrypt_comment(c)) for c in encrypted_data_list]
-            # create the workbook
-            workbook = create_excel(survey_id, submission_list)
-            filename = f"{survey_id}-daily.xlsx"
-            logger.info(f"Appending {filename} to zip")
-            zip_file.append(filename, workbook)
+            sub_list_for_period = [Submission(period, decrypt_comment(c)) for c in encrypted_data_list]
+            submission_list.extend(sub_list_for_period)
+
+        # create the workbook
+        workbook = create_excel(survey_id, submission_list)
+        filename = f"{survey_id}-daily.xlsx"
+        logger.info(f"Appending {filename} to zip")
+        zip_file.append(filename, workbook)
 
     return zip_file.get()
 
@@ -88,7 +91,7 @@ def get_daily_dict(kinds: List[str]) -> Dict:
     for k in kinds:
         survey_id, _, period = k.partition('_')
         if survey_id not in daily_dict:
-            daily_dict[survey_id] = [period]
+            daily_dict[survey_id] = []
         daily_dict[survey_id].append(period)
 
     return daily_dict
