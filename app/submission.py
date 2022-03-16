@@ -17,9 +17,7 @@ class Submission:
         return additional_dict
 
     def has_comment(self) -> bool:
-        if not self.comment:
-            return False
-        if self.comment == "":
+        if not self.comment or self.comment == "":
             return False
         else:
             return True
