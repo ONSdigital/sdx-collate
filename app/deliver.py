@@ -1,3 +1,5 @@
+from typing import IO
+
 import requests
 import structlog
 
@@ -19,7 +21,7 @@ class DeliveryError(Exception):
     pass
 
 
-def deliver_comments(file_name: str, zip_file: bytes):
+def deliver_comments(file_name: str, zip_file: IO[bytes]):
     """
     Calls the deliver endpoint specified by the output_type parameter.
     Returns True or raises appropriate error on response.

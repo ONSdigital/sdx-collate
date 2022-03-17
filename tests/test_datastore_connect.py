@@ -1,8 +1,9 @@
 import unittest
+from datetime import date
 
 from unittest.mock import patch, Mock
 
-from app.collate import get_datetime
+from app.collate import to_datetime
 from app.datastore_connect import fetch_comment_kinds, fetch_data_for_kind, fetch_data_for_survey
 
 
@@ -48,14 +49,14 @@ class TestDataStoreConnect(unittest.TestCase):
             mock_data_entity('abcde'),
             mock_data_entity('1a2b3c'),
         ]
-        self.assertEqual(['12345', 'abcde', '1a2b3c'], fetch_data_for_kind('009_2020', ">=", get_datetime(90)))
+        self.assertEqual(['12345', 'abcde', '1a2b3c'], fetch_data_for_kind('009_2020', ">=", to_datetime(date.today())))
 
     @patch('app.datastore_connect.CONFIG')
     def test_fetch_data_for_kind_fail(self, mock_config):
         mock_query = Mock()
         mock_config.DATASTORE_CLIENT.query.return_value = mock_query
         with self.assertRaises(Exception):
-            fetch_data_for_kind('', ">=", get_datetime(90))
+            fetch_data_for_kind('', ">=", to_datetime(date.today()))
 
     @patch('app.datastore_connect.CONFIG')
     def test_fetch_data_for_survey(self, mock_config):
@@ -82,5 +83,5 @@ class TestDataStoreConnect(unittest.TestCase):
             '2108': ['abcde', 'bcdef'],
             '2109': ['1a2b3'],
         }
-        actual = fetch_data_for_survey('009', period_list, "=", get_datetime(1))
+        actual = fetch_data_for_survey('009', period_list, "=", to_datetime(date.today()))
         self.assertDictEqual(expected, actual)

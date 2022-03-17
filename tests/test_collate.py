@@ -3,6 +3,8 @@ import glob
 import os
 import unittest
 import zipfile
+from datetime import date
+
 import pandas
 
 from requests import Session
@@ -53,11 +55,12 @@ class TestCollate(unittest.TestCase):
         fetch_data.return_value = [test_data_009]
         fetch_survey.return_value = {"2105": [test_data_009], "2106": [test_data_009]}
 
-        actual = collate.create_zip()
+        today = date.today()
+        actual = collate.create_daily_zip_only(today)
 
         z = zipfile.ZipFile(actual, "r")
         z.extractall('temp')
-        result = pandas.read_excel('temp/009-daily.xlsx')
+        result = pandas.read_excel(f'temp/009-daily-{today}.xlsx')
 
         self.assertEqual(int(result.iat[1, 1]), 2105)
         self.assertEqual(result.iat[1, 3], "My Comment")
@@ -72,7 +75,7 @@ class TestCollate(unittest.TestCase):
         fetch_kinds.return_value = ["187_201605"]
         fetch_data.return_value = [test_data_187]
         fetch_survey.return_value = {}
-        actual = collate.create_zip()
+        actual = collate.create_full_zip()
         self.assertIs(_io.BytesIO, type(actual))
 
         z = zipfile.ZipFile(actual, "r")
@@ -91,7 +94,7 @@ class TestCollate(unittest.TestCase):
         fetch_kinds.return_value = ["134_201605"]
         fetch_data.return_value = [test_data_139]
         fetch_survey.return_value = {}
-        actual = collate.create_zip()
+        actual = collate.create_full_zip()
         self.assertIs(_io.BytesIO, type(actual))
 
         z = zipfile.ZipFile(actual, "r")

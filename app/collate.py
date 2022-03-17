@@ -1,5 +1,6 @@
 from datetime import datetime, date, timedelta
-from typing import List, Dict
+from io import BytesIO
+from typing import List, Dict, IO
 
 import structlog
 from structlog.contextvars import bind_contextvars
@@ -16,42 +17,58 @@ logger = structlog.get_logger()
 
 def collate_comments():
     """
-    Orchestrates the required steps to process all comments stored within Datastore and save them in the
-    sdx-outputs bucket.
-    The steps include:
-        - Generating filename (Current date)
-        - Creating the in memory zip, fetch comments and generate excel file
-        - Calls SDX-Deliver endpoint to store
-    and are dependent on the survey and type of the submission.
+    Generates a zip of Excel files reporting the significant comments and associated metadata.
+
+    The comments are read from Datastore, written to Excel files, and then posted to sdx-deliver.
     """
     try:
         bind_contextvars(app="SDX-Collate")
-        file_name = generate_filename()
-        zip_bytes = create_zip()
+        file_name = generate_zip_filename()
+        zip_bytes = create_full_zip()
         deliver_comments(file_name, zip_bytes)
     except DeliveryError:
         logger.error("Delivery error")
 
 
-def generate_filename():
+def generate_zip_filename() -> str:
     """
-    Generates filename based on current date.
+    Generates the filename based on current date and time.
     """
     logger.info('Getting filename')
     date_time = datetime.utcnow()
     return f"{date_time.strftime('%Y-%m-%d_%H-%M-%S')}.zip"
 
 
-def create_zip():
+def create_full_zip() -> IO[bytes]:
     """
-    Generates an Excel file using the comments gathered from datastore and stores within an instance of InMemoryZip
+    Creates a zipfile containing both the 90 days files and the daily files.
+
+    The 90 days files each contain the last 90 days worth of comments for a single period of a single survey.
+    The daily files only contain the last days worth of comments but may contain multiple periods for each survey.
     """
     logger.info('Creating zip file')
     zip_file = InMemoryZip()
+    today = date.today()
+    append_90_days_files(zip_file, today)
+    yesterday = to_datetime(today) - timedelta(1)
+    append_daily_files(zip_file, yesterday)
+    return zip_file.get()
 
-    # Standard comments
-    # set the cutoff date as 90 days prior to today
-    ninety_days = get_datetime(90)
+
+def create_daily_zip_only(day: date) -> BytesIO:
+    """
+    Creates a zipfile containing only comments received on the provided 'day'
+    Each file represents a single survey but may contain comments for multiple periods
+    """
+    logger.info('Creating zip file')
+    zip_file = InMemoryZip()
+    append_daily_files(zip_file, day)
+    return zip_file.get()
+
+
+def append_90_days_files(zip_file: InMemoryZip, end_date: date):
+    # set the cutoff date as 90 days prior to end_date
+    ninety_days = to_datetime(end_date) - timedelta(90)
     kinds = fetch_comment_kinds()
     for k in kinds:
         survey_id, _, period = k.partition('_')
@@ -65,12 +82,13 @@ def create_zip():
         logger.info(f"Appending {filename} to zip")
         zip_file.append(filename, workbook)
 
-    # daily comments
+
+def append_daily_files(zip_file: InMemoryZip, chosen_date: date):
+    kinds = fetch_comment_kinds()
     daily_dict = get_daily_dict(kinds)
-    # set the search date as yesterday
-    yesterday = get_datetime(1)
+    day = to_datetime(chosen_date)
     for survey_id, period_list in daily_dict.items():
-        encrypted_data_dict = fetch_data_for_survey(survey_id, period_list, op='=', cutoff_date=yesterday)
+        encrypted_data_dict = fetch_data_for_survey(survey_id, period_list, op='=', cutoff_date=day)
         submission_list = []
         for period, encrypted_data_list in encrypted_data_dict.items():
             # decrypt the data in the list and convert to Submission
@@ -79,14 +97,12 @@ def create_zip():
 
         # create the workbook
         workbook = create_excel(survey_id, submission_list)
-        filename = f"{survey_id}-daily.xlsx"
+        filename = f"{survey_id}-daily-{chosen_date}.xlsx"
         logger.info(f"Appending {filename} to zip")
         zip_file.append(filename, workbook)
 
-    return zip_file.get()
 
-
-def get_daily_dict(kinds: List[str]) -> Dict:
+def get_daily_dict(kinds: List[str]) -> Dict[str, List[str]]:
     daily_dict = {}
     for k in kinds:
         survey_id, _, period = k.partition('_')
@@ -97,7 +113,5 @@ def get_daily_dict(kinds: List[str]) -> Dict:
     return daily_dict
 
 
-def get_datetime(no_days_previous: int):
-    d = date.today()
-    today = datetime(d.year, d.month, d.day)
-    return today - timedelta(no_days_previous)
+def to_datetime(d: date) -> datetime:
+    return datetime(d.year, d.month, d.day)
