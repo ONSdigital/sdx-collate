@@ -3,7 +3,7 @@ import glob
 import os
 import unittest
 import zipfile
-from datetime import date
+from datetime import date, timedelta
 
 import pandas
 
@@ -50,7 +50,36 @@ class TestCollate(unittest.TestCase):
     @patch('app.collate.fetch_comment_kinds')
     @patch('app.collate.fetch_data_for_kind')
     @patch('app.collate.fetch_data_for_survey')
-    def test_create_zip_verify_009_daily(self, fetch_survey, fetch_data, fetch_kinds):
+    def test_create_zip_verify_009(self, fetch_survey, fetch_data, fetch_kinds):
+        fetch_kinds.return_value = ["009_2105", "009_2106"]
+        fetch_data.return_value = [test_data_009]
+        fetch_survey.return_value = {"2105": [test_data_009], "2106": [test_data_009]}
+
+        yesterday = date.today() - timedelta(1)
+        actual = collate.create_full_zip()
+
+        z = zipfile.ZipFile(actual, "r")
+        z.extractall('temp')
+        daily = pandas.read_excel(f'temp/009-daily-{yesterday}.xlsx')
+
+        self.assertEqual(int(daily.iat[1, 1]), 2105)
+        self.assertEqual(daily.iat[1, 3], "My Comment")
+
+        self.assertEqual(int(daily.iat[2, 1]), 2106)
+        self.assertEqual(daily.iat[2, 3], "My Comment")
+
+        result_2105 = pandas.read_excel(f'temp/009_2105.xlsx')
+        self.assertEqual(int(result_2105.iat[1, 1]), 2105)
+        self.assertEqual(result_2105.iat[1, 3], "My Comment")
+
+        result_2106 = pandas.read_excel(f'temp/009_2106.xlsx')
+        self.assertEqual(int(result_2106.iat[1, 1]), 2106)
+        self.assertEqual(result_2106.iat[1, 3], "My Comment")
+
+    @patch('app.collate.fetch_comment_kinds')
+    @patch('app.collate.fetch_data_for_kind')
+    @patch('app.collate.fetch_data_for_survey')
+    def test_create_daily(self, fetch_survey, fetch_data, fetch_kinds):
         fetch_kinds.return_value = ["009_2105", "009_2106"]
         fetch_data.return_value = [test_data_009]
         fetch_survey.return_value = {"2105": [test_data_009], "2106": [test_data_009]}

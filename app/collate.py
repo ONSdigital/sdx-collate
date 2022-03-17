@@ -50,7 +50,7 @@ def create_full_zip() -> IO[bytes]:
     zip_file = InMemoryZip()
     today = date.today()
     append_90_days_files(zip_file, today)
-    yesterday = to_datetime(today) - timedelta(1)
+    yesterday = today - timedelta(1)
     append_daily_files(zip_file, yesterday)
     return zip_file.get()
 
