@@ -81,8 +81,8 @@ def create_daily_zip_only(day: date) -> BytesIO:
 
 def append_90_days_files(zip_file: InMemoryZip, today: date):
     """
-        Appends files for each distinct survey and period containing the last 90 days of comments
-        Each file is named <survey_id>_<period>.xlsx e.g. 009_2105.xlsx.
+    Appends files for each distinct survey and period containing the last 90 days of comments
+    Each file is named <survey_id>_<period>.xlsx e.g. 009_2105.xlsx.
     """
     end_date = to_datetime(today)
     ninety_days_ago = to_datetime(end_date) - timedelta(90)
@@ -102,10 +102,10 @@ def append_90_days_files(zip_file: InMemoryZip, today: date):
 
 def append_daily_files(zip_file: InMemoryZip, chosen_day: date):
     """
-        Appends files for each distinct survey containing the comments
-        for all periods recorded on the 'chosen_day' given.
+    Appends files for each distinct survey containing the comments
+    for all periods recorded on the 'chosen_day' given.
 
-        Each file is named <survey_id>-daily-<chosen_day>.xlsx e.g. 009_daily_2022-03-16.xlsx.
+    Each file is named <survey_id>-daily-<chosen_day>.xlsx e.g. 009_daily_2022-03-16.xlsx.
     """
     start_date = to_datetime(chosen_day)
     end_date = start_date + timedelta(1)
