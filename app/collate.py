@@ -48,10 +48,22 @@ def create_full_zip() -> IO[bytes]:
     """
     logger.info('Creating zip file')
     zip_file = InMemoryZip()
+
     today = date.today()
     append_90_days_files(zip_file, today)
-    yesterday = today - timedelta(1)
-    append_daily_files(zip_file, yesterday)
+
+    if today.strftime('%A') == 'Monday':
+        friday = today - timedelta(3)
+        saturday = today - timedelta(2)
+        sunday = today - timedelta(1)
+        days = [friday, saturday, sunday]
+    else:
+        yesterday = today - timedelta(1)
+        days = [yesterday]
+
+    for day in days:
+        append_daily_files(zip_file, day)
+
     return zip_file.get()
 
 
