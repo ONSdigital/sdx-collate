@@ -94,7 +94,7 @@ def append_90_days_files(zip_file: InMemoryZip, today: date):
         # decrypt the data in the list and convert to Submission
         submission_list = [Submission(period, decrypt_comment(c)) for c in encrypted_data_list]
         # create the workbook
-        workbook = create_excel(survey_id, submission_list)
+        workbook, _ = create_excel(survey_id, submission_list)
         filename = f"{k}.xlsx"
         logger.info(f"Appending {filename} to zip")
         zip_file.append(filename, workbook)
@@ -123,10 +123,11 @@ def append_daily_files(zip_file: InMemoryZip, chosen_day: date):
             submission_list.extend(sub_list_for_period)
 
         # create the workbook
-        workbook = create_excel(survey_id, submission_list)
-        filename = f"{survey_id}_daily_{chosen_day}.xlsx"
-        logger.info(f"Appending {filename} to zip")
-        zip_file.append(filename, workbook)
+        workbook, count = create_excel(survey_id, submission_list)
+        if count > 0:
+            filename = f"{survey_id}_daily_{chosen_day}.xlsx"
+            logger.info(f"Appending {filename} to zip")
+            zip_file.append(filename, workbook)
 
 
 def get_daily_dict(kinds: List[str]) -> Dict[str, List[str]]:

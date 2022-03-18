@@ -13,7 +13,8 @@ logger = structlog.get_logger()
 
 def create_excel(survey_id, submission_list):
     """
-    Generates an excel file from the list of comments passed in that relate to the given survey_id and period
+    Generates an excel file from the list of comments passed in that relate to the given survey_id and period.
+    Returns the file and the count of comments within the file.
     """
     logger.info("Generating Excel file")
     workbook = Workbook()
@@ -43,7 +44,7 @@ def create_excel(survey_id, submission_list):
     virtual_workbook = BytesIO()
     workbook.save(virtual_workbook)
 
-    return virtual_workbook.getvalue()
+    return virtual_workbook.getvalue(), surveys_with_comments_count
 
 
 def add_row(ws: Worksheet, row_index: int, survey_id: str, submission: Submission):
