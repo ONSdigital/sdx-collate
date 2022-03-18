@@ -25,7 +25,8 @@ def fetch_comment_kinds() -> list:
 
 def fetch_entity_list_for_kind(kind: str, start_date: datetime, end_date: datetime) -> list:
     """
-        Returns a list of the entities for the given 'kind' between start_date (inclusive) and end_date (exclusive)
+        Returns a list of the entities for the given 'kind',
+        created between start_date (inclusive) and end_date (exclusive).
     """
     try:
         if kind is None or kind == '':
