@@ -1,9 +1,8 @@
 import unittest
-from datetime import date
+from datetime import date, datetime
 
 from unittest.mock import patch, Mock
 
-from app.collate import to_datetime
 from app.datastore_connect import fetch_comment_kinds, fetch_data_for_kind, fetch_data_for_survey
 
 
@@ -17,6 +16,11 @@ class MockKeyEntity:
 
 def mock_data_entity(data):
     return {"encrypted_data": data}
+
+
+def mock_date() -> datetime:
+    d = date.today()
+    return datetime(d.year, d.month, d.day)
 
 
 class TestDataStoreConnect(unittest.TestCase):
@@ -49,14 +53,14 @@ class TestDataStoreConnect(unittest.TestCase):
             mock_data_entity('abcde'),
             mock_data_entity('1a2b3c'),
         ]
-        self.assertEqual(['12345', 'abcde', '1a2b3c'], fetch_data_for_kind('009_2020', ">=", to_datetime(date.today())))
+        self.assertEqual(['12345', 'abcde', '1a2b3c'], fetch_data_for_kind('009_2020', mock_date(), mock_date()))
 
     @patch('app.datastore_connect.CONFIG')
     def test_fetch_data_for_kind_fail(self, mock_config):
         mock_query = Mock()
         mock_config.DATASTORE_CLIENT.query.return_value = mock_query
         with self.assertRaises(Exception):
-            fetch_data_for_kind('', ">=", to_datetime(date.today()))
+            fetch_data_for_kind('', mock_date(), mock_date())
 
     @patch('app.datastore_connect.CONFIG')
     def test_fetch_data_for_survey(self, mock_config):
@@ -83,5 +87,5 @@ class TestDataStoreConnect(unittest.TestCase):
             '2108': ['abcde', 'bcdef'],
             '2109': ['1a2b3'],
         }
-        actual = fetch_data_for_survey('009', period_list, "=", to_datetime(date.today()))
+        actual = fetch_data_for_survey('009', period_list, mock_date(), mock_date())
         self.assertDictEqual(expected, actual)

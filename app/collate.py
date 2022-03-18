@@ -66,14 +66,14 @@ def create_daily_zip_only(day: date) -> BytesIO:
     return zip_file.get()
 
 
-def append_90_days_files(zip_file: InMemoryZip, end_date: date):
-    # set the cutoff date as 90 days prior to end_date
-    ninety_days = to_datetime(end_date) - timedelta(90)
+def append_90_days_files(zip_file: InMemoryZip, today: date):
+    end_date = to_datetime(today)
+    ninety_days_ago = to_datetime(end_date) - timedelta(90)
     kinds = fetch_comment_kinds()
     for k in kinds:
         survey_id, _, period = k.partition('_')
         # get the list of encrypted data for this kind
-        encrypted_data_list = fetch_data_for_kind(k, op='>=', cutoff_date=ninety_days)
+        encrypted_data_list = fetch_data_for_kind(k, start_date=ninety_days_ago, end_date=end_date)
         # decrypt the data in the list and convert to Submission
         submission_list = [Submission(period, decrypt_comment(c)) for c in encrypted_data_list]
         # create the workbook
@@ -83,12 +83,16 @@ def append_90_days_files(zip_file: InMemoryZip, end_date: date):
         zip_file.append(filename, workbook)
 
 
-def append_daily_files(zip_file: InMemoryZip, chosen_date: date):
+def append_daily_files(zip_file: InMemoryZip, chosen_day: date):
+    start_date = to_datetime(chosen_day)
+    end_date = start_date + timedelta(1)
     kinds = fetch_comment_kinds()
     daily_dict = get_daily_dict(kinds)
-    day = to_datetime(chosen_date)
     for survey_id, period_list in daily_dict.items():
-        encrypted_data_dict = fetch_data_for_survey(survey_id, period_list, op='=', cutoff_date=day)
+        encrypted_data_dict = fetch_data_for_survey(survey_id,
+                                                    period_list,
+                                                    start_date=start_date,
+                                                    end_date=end_date)
         submission_list = []
         for period, encrypted_data_list in encrypted_data_dict.items():
             # decrypt the data in the list and convert to Submission
@@ -97,7 +101,7 @@ def append_daily_files(zip_file: InMemoryZip, chosen_date: date):
 
         # create the workbook
         workbook = create_excel(survey_id, submission_list)
-        filename = f"{survey_id}-daily-{chosen_date}.xlsx"
+        filename = f"{survey_id}-daily-{chosen_day}.xlsx"
         logger.info(f"Appending {filename} to zip")
         zip_file.append(filename, workbook)
 
