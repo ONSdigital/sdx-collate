@@ -60,7 +60,7 @@ class TestCollate(unittest.TestCase):
 
         z = zipfile.ZipFile(actual, "r")
         z.extractall('temp')
-        daily = pandas.read_excel(f'temp/009-daily-{yesterday}.xlsx')
+        daily = pandas.read_excel(f'temp/009_daily_{yesterday}.xlsx')
 
         self.assertEqual(int(daily.iat[1, 1]), 2105)
         self.assertEqual(daily.iat[1, 3], "My Comment")
@@ -89,7 +89,7 @@ class TestCollate(unittest.TestCase):
 
         z = zipfile.ZipFile(actual, "r")
         z.extractall('temp')
-        result = pandas.read_excel(f'temp/009-daily-{today}.xlsx')
+        result = pandas.read_excel(f'temp/009_daily_{today}.xlsx')
 
         self.assertEqual(int(result.iat[1, 1]), 2105)
         self.assertEqual(result.iat[1, 3], "My Comment")

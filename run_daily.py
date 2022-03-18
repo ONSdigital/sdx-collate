@@ -14,5 +14,5 @@ if __name__ == '__main__':
     logger.info('Starting SDX-Collate')
     cloud_config()
     zip_file = create_daily_zip_only(chosen_date)
-    with open(f"temp/daily-{chosen_date}.zip", "wb") as f:
+    with open(f"temp/daily_{chosen_date}.zip", "wb") as f:
         f.write(zip_file.getbuffer())

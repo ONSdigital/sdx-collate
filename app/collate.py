@@ -52,6 +52,7 @@ def create_full_zip() -> IO[bytes]:
     today = date.today()
     append_90_days_files(zip_file, today)
 
+    # On a Monday we need to get the daily files for Friday, Saturday and Sunday. Else just get the day before.
     if today.strftime('%A') == 'Monday':
         friday = today - timedelta(3)
         saturday = today - timedelta(2)
@@ -79,6 +80,10 @@ def create_daily_zip_only(day: date) -> BytesIO:
 
 
 def append_90_days_files(zip_file: InMemoryZip, today: date):
+    """
+        Appends files for each distinct survey and period containing the last 90 days of comments
+        Each file is named <survey_id>_<period>.xlsx e.g. 009_2105.xlsx.
+    """
     end_date = to_datetime(today)
     ninety_days_ago = to_datetime(end_date) - timedelta(90)
     kinds = fetch_comment_kinds()
@@ -96,6 +101,12 @@ def append_90_days_files(zip_file: InMemoryZip, today: date):
 
 
 def append_daily_files(zip_file: InMemoryZip, chosen_day: date):
+    """
+        Appends files for each distinct survey containing the comments
+        for all periods recorded on the 'chosen_day' given.
+
+        Each file is named <survey_id>-daily-<chosen_day>.xlsx e.g. 009_daily_2022-03-16.xlsx.
+    """
     start_date = to_datetime(chosen_day)
     end_date = start_date + timedelta(1)
     kinds = fetch_comment_kinds()
@@ -113,7 +124,7 @@ def append_daily_files(zip_file: InMemoryZip, chosen_day: date):
 
         # create the workbook
         workbook = create_excel(survey_id, submission_list)
-        filename = f"{survey_id}-daily-{chosen_day}.xlsx"
+        filename = f"{survey_id}_daily_{chosen_day}.xlsx"
         logger.info(f"Appending {filename} to zip")
         zip_file.append(filename, workbook)
 
