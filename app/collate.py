@@ -24,7 +24,8 @@ def collate_comments():
     try:
         bind_contextvars(app="SDX-Collate")
         file_name = generate_zip_filename()
-        zip_bytes = create_full_zip()
+        today = date.today()
+        zip_bytes = create_full_zip(today)
         deliver_comments(file_name, zip_bytes)
     except DeliveryError:
         logger.error("Delivery error")
@@ -39,7 +40,7 @@ def generate_zip_filename() -> str:
     return f"{date_time.strftime('%Y-%m-%d_%H-%M-%S')}.zip"
 
 
-def create_full_zip() -> IO[bytes]:
+def create_full_zip(day: date) -> IO[bytes]:
     """
     Creates a zipfile containing both the 90 days files and the daily files.
 
@@ -49,21 +50,20 @@ def create_full_zip() -> IO[bytes]:
     logger.info('Creating zip file')
     zip_file = InMemoryZip()
 
-    today = date.today()
-    append_90_days_files(zip_file, today)
+    append_90_days_files(zip_file, day)
 
     # On a Monday we need to get the daily files for Friday, Saturday and Sunday. Else just get the day before.
-    if today.strftime('%A') == 'Monday':
-        friday = today - timedelta(3)
-        saturday = today - timedelta(2)
-        sunday = today - timedelta(1)
+    if day.strftime('%A') == 'Monday':
+        friday = day - timedelta(3)
+        saturday = day - timedelta(2)
+        sunday = day - timedelta(1)
         days = [friday, saturday, sunday]
     else:
-        yesterday = today - timedelta(1)
+        yesterday = day - timedelta(1)
         days = [yesterday]
 
-    for day in days:
-        append_daily_files(zip_file, day)
+    for d in days:
+        append_daily_files(zip_file, d)
 
     return zip_file.get()
 

@@ -56,7 +56,7 @@ class TestCollate(unittest.TestCase):
         fetch_survey.return_value = {"2105": [test_data_009], "2106": [test_data_009]}
 
         yesterday = date.today() - timedelta(1)
-        actual = collate.create_full_zip()
+        actual = collate.create_full_zip(date.today())
 
         z = zipfile.ZipFile(actual, "r")
         z.extractall('temp')
@@ -104,7 +104,7 @@ class TestCollate(unittest.TestCase):
         fetch_kinds.return_value = ["187_201605"]
         fetch_data.return_value = [test_data_187]
         fetch_survey.return_value = {}
-        actual = collate.create_full_zip()
+        actual = collate.create_full_zip(date.today())
         self.assertIs(_io.BytesIO, type(actual))
 
         z = zipfile.ZipFile(actual, "r")
@@ -123,7 +123,7 @@ class TestCollate(unittest.TestCase):
         fetch_kinds.return_value = ["134_201605"]
         fetch_data.return_value = [test_data_139]
         fetch_survey.return_value = {}
-        actual = collate.create_full_zip()
+        actual = collate.create_full_zip(date.today())
         self.assertIs(_io.BytesIO, type(actual))
 
         z = zipfile.ZipFile(actual, "r")
