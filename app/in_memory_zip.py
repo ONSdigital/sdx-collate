@@ -28,6 +28,6 @@ class InMemoryZip:
         """Rewind current file position to the start of in memory file"""
         self.in_memory_zip.seek(0)
 
-    def get(self):
+    def get(self) -> BytesIO:
         self.rewind()
         return self.in_memory_zip
