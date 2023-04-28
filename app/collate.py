@@ -2,17 +2,16 @@ from datetime import datetime, date, timedelta
 from io import BytesIO
 from typing import List, Dict, IO
 
-import structlog
-from structlog.contextvars import bind_contextvars
+from sdx_gcp.app import get_logger
 
 from app.datastore_connect import fetch_comment_kinds, fetch_data_for_kind, fetch_data_for_survey
 from app.decrypt import decrypt_comment
-from app.deliver import deliver_comments, DeliveryError
+from app.deliver import deliver_comments
 from app.excel import create_excel
 from app.in_memory_zip import InMemoryZip
 from app.submission import Submission
 
-logger = structlog.get_logger()
+logger = get_logger()
 
 
 def collate_comments():
@@ -22,13 +21,12 @@ def collate_comments():
     The comments are read from Datastore, written to Excel files, and then posted to sdx-deliver.
     """
     try:
-        bind_contextvars(app="SDX-Collate")
         file_name = generate_zip_filename()
         today = date.today()
         zip_bytes = create_full_zip(today)
         deliver_comments(file_name, zip_bytes)
-    except DeliveryError:
-        logger.error("Delivery error")
+    except Exception as e:
+        logger.error("Delivery error", error=str(e))
 
 
 def generate_zip_filename() -> str:

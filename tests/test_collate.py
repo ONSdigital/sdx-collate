@@ -5,9 +5,6 @@ import unittest
 import zipfile
 from datetime import date, timedelta
 
-import pandas
-
-from requests import Session
 from unittest.mock import patch, Mock
 from app import collate
 from app.excel import create_excel
