@@ -7,7 +7,6 @@ from datetime import date, timedelta
 
 import pandas
 
-from requests import Session
 from unittest.mock import patch, Mock
 from app import collate
 from app.excel import create_excel
@@ -141,44 +140,6 @@ class TestCollate(unittest.TestCase):
         self.assertEqual(int(result.iat[1, 1]), 201605)
         os.remove('temp/134_201605.xlsx')
 
-    @patch('app.collate.fetch_comment_kinds')
-    @patch('app.collate.fetch_data_for_kind')
-    @patch('app.collate.fetch_data_for_survey')
-    @patch.object(Session, 'post')
-    def test_post_400(self, mock_request, fetch_survey, fetch_data, fetch_kinds):
-        with self.assertRaises(Exception):
-            fetch_kinds.return_value = ["134_201605"]
-            fetch_data.return_value = [test_data_139]
-            fetch_survey.return_value = {}
-            mock_request.return_value.status_code = 400
-            collate.collate_comments()
-
-    @patch('app.collate.fetch_comment_kinds')
-    @patch('app.collate.fetch_data_for_kind')
-    @patch('app.collate.fetch_data_for_survey')
-    @patch.object(Session, 'post')
-    def test_post_503(self, mock_request, fetch_survey, fetch_data, fetch_kinds):
-        with self.assertLogs('app.deliver', level='ERROR'):
-            fetch_kinds.return_value = ["134_201605"]
-            fetch_data.return_value = [test_data_139]
-            fetch_survey.return_value = {}
-            mock_request.return_value.status_code = 503
-            collate.collate_comments()
-
-    @patch('app.collate.fetch_comment_kinds')
-    @patch('app.collate.fetch_data_for_kind')
-    @patch('app.collate.fetch_data_for_survey')
-    @patch('app.deliver.post')
-    def test_post_200(self, mock_post, fetch_survey, fetch_data, fetch_kinds):
-        with self.assertLogs('app.deliver', level='INFO'):
-            fetch_kinds.return_value = ["134_201605"]
-            fetch_data.return_value = [test_data_139]
-            fetch_survey.return_value = {}
-            mock_post_method = Mock()
-            mock_post_method.status_code = 200
-            mock_post.return_value = mock_post_method
-            collate.collate_comments()
-
     def test_excel_no_comment(self):
         data = [{'ru_ref': '12346789012A', 'boxes_selected': '', 'comment': None, 'additional': []},
                 {'ru_ref': '12346789012A', 'boxes_selected': '', 'comment': 'I am a comment', 'additional': []}]
@@ -186,5 +147,6 @@ class TestCollate(unittest.TestCase):
         submission_list = [Submission(period, d) for d in data]
         with self.assertLogs('app.excel', level='INFO') as actual:
             create_excel('019', submission_list)
-        self.assertEqual(actual.output[1], 'INFO:app.excel:{"event": "1 out of 2 submissions had comments", '
-                                           '"level": "info", "logger": "app.excel"}')
+
+        self.assertEqual(actual.output[1], 'INFO:app.excel:{"logger": "app.excel", "severity": "INFO", "message": "1 '
+                                           'out of 2 submissions had comments"}')

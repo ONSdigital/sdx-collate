@@ -1,5 +1,4 @@
-import structlog
-
+from sdx_gcp.app import get_logger
 from openpyxl import Workbook
 from io import BytesIO
 
@@ -8,7 +7,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 
 from app.submission import Submission
 
-logger = structlog.get_logger()
+logger = get_logger()
 
 
 def create_excel(survey_id, submission_list):

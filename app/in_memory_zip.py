@@ -1,9 +1,9 @@
-import structlog
-
 from io import BytesIO
 from zipfile import ZIP_DEFLATED, ZipFile
 
-logger = structlog.get_logger()
+from sdx_gcp.app import get_logger
+
+logger = get_logger()
 
 
 class InMemoryZip:
