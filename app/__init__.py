@@ -4,11 +4,13 @@ import sdx_gcp.secrets
 
 from google.cloud import datastore
 from sdx_gcp.app import get_logger
+from sdx_gcp.logger import configure_logger
 
 logger = get_logger()
 
 project_id = os.getenv('PROJECT_ID', 'ons-sdx-sandbox')
 deliver_service_url = os.getenv('DELIVER_SERVICE_URL', "http://sdx-deliver:80")
+configure_logger()
 
 
 class Config:
