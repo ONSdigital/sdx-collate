@@ -61,5 +61,5 @@ def add_row(ws: Worksheet, row_index: int, survey_id: str, submission: Submissio
     try:
         ws.cell(row_index, 4, submission.comment)
     except IllegalCharacterError:
-        logger.info(f"Comment with illegal character found")
+        logger.info("Comment with illegal character found")
         ws.cell(row_index, 4, 'This comment contained ASCII characters that are not printable')
