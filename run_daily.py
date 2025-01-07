@@ -7,7 +7,7 @@ from app.collate import create_daily_zip_only, create_full_zip
 logger = structlog.get_logger()
 
 # change to the desired date before running
-chosen_day = date(2022, 3, 22)
+chosen_day = date(2024, 7, 26)
 
 # create full zip or just daily
 full_zip = True

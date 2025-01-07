@@ -10,7 +10,7 @@ from app.submission import Submission
 logger = get_logger()
 
 
-def create_excel(survey_id, submission_list):
+def create_excel(survey_id: str, submission_list: list[Submission]):
     """
     Generates an excel file from the list of comments passed in that relate to the given survey_id and period.
     Returns the file and the count of comments within the file.
