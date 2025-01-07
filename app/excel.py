@@ -10,7 +10,7 @@ from app.submission import Submission
 logger = get_logger()
 
 
-def create_excel(survey_id, submission_list):
+def create_excel(survey_id: str, submission_list: list[Submission]):
     """
     Generates an excel file from the list of comments passed in that relate to the given survey_id and period.
     Returns the file and the count of comments within the file.
@@ -61,5 +61,5 @@ def add_row(ws: Worksheet, row_index: int, survey_id: str, submission: Submissio
     try:
         ws.cell(row_index, 4, submission.comment)
     except IllegalCharacterError:
-        logger.info(f"Comment with illegal character found")
+        logger.info("Comment with illegal character found")
         ws.cell(row_index, 4, 'This comment contained ASCII characters that are not printable')
