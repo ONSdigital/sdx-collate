@@ -11,6 +11,8 @@ logger = get_logger()
 
 DELIVER_NAME = 'zip'
 MAX_ATTEMPTS = 3
+MESSAGE_SCHEMA = "message_schema"
+V2 = "v2"
 
 
 def deliver_comments(file_name: str, zip_file: IO[bytes], attempt: int = 0):
@@ -22,7 +24,7 @@ def deliver_comments(file_name: str, zip_file: IO[bytes], attempt: int = 0):
     endpoint = "deliver/comments"
 
     try:
-        post(domain, endpoint, None, params={"filename": file_name}, files={DELIVER_NAME: zip_file})
+        post(domain, endpoint, None, params={"filename": file_name, MESSAGE_SCHEMA: V2}, files={DELIVER_NAME: zip_file})
 
     except RetryableError as e:
         logger.error("Failed to deliver comments", error=str(e))
