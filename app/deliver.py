@@ -15,7 +15,7 @@ DELIVER_NAME: Final[str] = 'zip'
 DELIVER_NAME_V2: Final[str] = 'zip_file'
 MAX_ATTEMPTS = 3
 DELIVER_V1_ENDPOINT: Final[str] = "deliver/comments"
-DELIVER_V2_ENDPOINT: Final[str] = "deliver-v2/comments"
+DELIVER_V2_ENDPOINT: Final[str] = "deliver/v2/comments"
 SERVICE_DOMAIN: Final[str] = CONFIG.DELIVER_SERVICE_URL
 
 
