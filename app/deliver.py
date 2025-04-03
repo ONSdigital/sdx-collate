@@ -26,10 +26,10 @@ class CommentContext(TypedDict):
 
 
 def deliver_comments(file_name: str, zip_file: IO[bytes], attempt: int = 0):
-    if CONFIG.PROJECT_ID == "ons-sdx-prod" or CONFIG.PROJECT_ID == "ons-sdx-ci":
-        deliver_v1_comments(file_name, zip_file, attempt)
-    else:
+    if CONFIG.PROJECT_ID == "ons-sdx-preprod" or CONFIG.PROJECT_ID == "ons-sdx-nifi":
         deliver_v2_comments(file_name, zip_file, attempt)
+    else:
+        deliver_v1_comments(file_name, zip_file, attempt)
 
 
 def deliver_v1_comments(file_name: str, zip_file: IO[bytes], attempt: int = 0):
