@@ -61,7 +61,8 @@ def deliver_v2_comments(file_name: str, zip_file: IO[bytes], attempt: int = 0):
     context: CommentContext = {
         "tx_id": tx_id,
         "survey_type": "comments",
-        "title": "sdx_comments"
+        "title": "sdx_comments",
+        "context_type": "comments_file"
     }
 
     try:
