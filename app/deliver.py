@@ -23,34 +23,10 @@ class CommentContext(TypedDict):
     tx_id: str
     survey_type: str
     title: str
+    context_type: str
 
 
 def deliver_comments(file_name: str, zip_file: IO[bytes], attempt: int = 0):
-    if CONFIG.PROJECT_ID == "ons-sdx-preprod" or CONFIG.PROJECT_ID == "ons-sdx-nifi":
-        deliver_v2_comments(file_name, zip_file, attempt)
-    else:
-        deliver_v1_comments(file_name, zip_file, attempt)
-
-
-def deliver_v1_comments(file_name: str, zip_file: IO[bytes], attempt: int = 0):
-    """
-    Calls the 'deliver' endpoint specified by the output_type parameter.
-    Returns True or raises appropriate error on response.
-    """
-
-    try:
-        post(SERVICE_DOMAIN, DELIVER_V1_ENDPOINT, None, params={"filename": file_name}, files={DELIVER_NAME: zip_file})
-
-    except RetryableError as e:
-        logger.error("Failed to deliver comments", error=str(e))
-        time.sleep(5)
-        if attempt < MAX_ATTEMPTS:
-            deliver_v1_comments(file_name, zip_file, attempt + 1)
-        else:
-            raise e
-
-
-def deliver_v2_comments(file_name: str, zip_file: IO[bytes], attempt: int = 0):
     """
     Calls the 'deliver' endpoint specified by the output_type parameter.
     Returns True or raises appropriate error on response.
@@ -73,6 +49,6 @@ def deliver_v2_comments(file_name: str, zip_file: IO[bytes], attempt: int = 0):
         logger.error("Failed to deliver comments", error=str(e))
         time.sleep(5)
         if attempt < MAX_ATTEMPTS:
-            deliver_v2_comments(file_name, zip_file, attempt + 1)
+            deliver_comments(file_name, zip_file, attempt + 1)
         else:
             raise e
