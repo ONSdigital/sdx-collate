@@ -31,6 +31,18 @@ test_data_139 = {"ru_ref": "12346789012A",
                      {"qcode": "300w5", "comment": "drill hole"}
                  ]}
 
+test_data_134 = {"ru_ref": "12346789012A",
+                 "boxes_selected": "91w, 95w, 96w, 97w, 91f, 95f, 96f, 97f, 191m, 195m, 196m, 197m, 191w4, 195w4, "
+                                   "196w4, 197w4, 191w5, 195w5, 196w5, 197w5, ",
+                 "comment": "flux clean",
+                 "additional": [
+                     {"qcode": "300w", "comment": "Pipe \x0B mania"},
+                     {"qcode": "300f", "comment": "Gas leak"},
+                     {"qcode": "300m", "comment": "copper pipe"},
+                     {"qcode": "300w4", "comment": "solder joint"},
+                     {"qcode": "300w5", "comment": "drill hole"}
+                 ]}
+
 
 def mock_decrypt(data):
     return data
@@ -133,6 +145,31 @@ class TestCollate(unittest.TestCase):
                                            '195w4, 196w4, 197w4, 191w5, 195w5, 196w5, 197w5, ')
         self.assertEqual(result.iat[1, 3], 'flux clean')
         self.assertEqual(result.iat[1, 4], 'Pipe mania')
+        self.assertEqual(result.iat[1, 5], 'Gas leak')
+        self.assertEqual(result.iat[1, 6], 'copper pipe')
+        self.assertEqual(result.iat[1, 7], 'solder joint')
+        self.assertEqual(result.iat[1, 8], 'drill hole')
+        self.assertEqual(int(result.iat[1, 1]), 201605)
+        os.remove('temp/134_201605.xlsx')
+
+    @patch('app.collate.fetch_comment_kinds')
+    @patch('app.collate.fetch_data_for_kind')
+    @patch('app.collate.fetch_data_for_survey')
+    def test_create_zip_134_with_illegal_chars(self, fetch_survey, fetch_data, fetch_kinds):
+        fetch_kinds.return_value = ["134_201605"]
+        fetch_data.return_value = [test_data_134]
+        fetch_survey.return_value = {}
+        actual = collate.create_full_zip(date.today())
+        self.assertIs(_io.BytesIO, type(actual))
+
+        z = zipfile.ZipFile(actual, "r")
+        z.extractall('temp')
+        result = pandas.read_excel('temp/134_201605.xlsx')
+
+        self.assertEqual(result.iat[1, 2], '91w, 95w, 96w, 97w, 91f, 95f, 96f, 97f, 191m, 195m, 196m, 197m, 191w4, '
+                                           '195w4, 196w4, 197w4, 191w5, 195w5, 196w5, 197w5, ')
+        self.assertEqual(result.iat[1, 3], 'flux clean')
+        self.assertEqual(result.iat[1, 4], 'This comment contained illegal characters that are not printable')
         self.assertEqual(result.iat[1, 5], 'Gas leak')
         self.assertEqual(result.iat[1, 6], 'copper pipe')
         self.assertEqual(result.iat[1, 7], 'solder joint')

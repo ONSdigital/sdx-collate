@@ -55,11 +55,15 @@ def add_row(ws: Worksheet, row_index: int, survey_id: str, submission: Submissio
     if survey_id == '134':
         for qcode, additional_comment in submission.additional.items():
             if qcode in additional_mappings:
-                ws.cell(row_index, additional_mappings[qcode], additional_comment)
+                try:
+                    ws.cell(row_index, additional_mappings[qcode], additional_comment)
+                except IllegalCharacterError:
+                    logger.info("Comment with illegal character found")
+                    ws.cell(row_index, additional_mappings[qcode], 'This comment contained illegal characters that are not printable')
 
     ws.cell(row_index, 3, submission.boxes_selected)
     try:
         ws.cell(row_index, 4, submission.comment)
     except IllegalCharacterError:
         logger.info("Comment with illegal character found")
-        ws.cell(row_index, 4, 'This comment contained ASCII characters that are not printable')
+        ws.cell(row_index, 4, 'This comment contained illegal characters that are not printable')
