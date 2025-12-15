@@ -9,7 +9,7 @@ import pandas
 
 from unittest.mock import patch
 from app import collate
-from app.excel import create_excel
+from app.services.writer import create_excel
 from app.submission import Submission
 
 test_data_009 = {"ru_ref": "123456", "boxes_selected": "", "comment": "My Comment", "additional": []}

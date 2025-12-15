@@ -1,14 +1,14 @@
 from datetime import datetime, date, timedelta
 from io import BytesIO
-from typing import List, Dict, IO
+from typing import IO
 
 from sdx_gcp.app import get_logger
 
-from app.datastore_connect import fetch_comment_kinds, fetch_data_for_kind, fetch_data_for_survey
-from app.decrypt import decrypt_comment
-from app.deliver import deliver_comments
-from app.excel import create_excel
-from app.in_memory_zip import InMemoryZip
+from app.services.reader import fetch_comment_kinds, fetch_data_for_kind, fetch_data_for_survey
+from app.services.decrypter import decrypt_comment
+from app.services.deliver import deliver_comments
+from app.services.writer import create_excel
+from app.services.zip import InMemoryZip
 from app.submission import Submission
 
 logger = get_logger()
@@ -128,7 +128,7 @@ def append_daily_files(zip_file: InMemoryZip, chosen_day: date):
             zip_file.append(filename, workbook)
 
 
-def get_daily_dict(kinds: List[str]) -> Dict[str, List[str]]:
+def get_daily_dict(kinds: list[str]) -> dict[str, list[str]]:
     daily_dict = {}
     for k in kinds:
         survey_id, _, period = k.partition('_')

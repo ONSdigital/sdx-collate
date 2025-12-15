@@ -1,7 +1,7 @@
 import unittest
 
 from app import CONFIG
-from app.decrypt import decrypt_comment
+from app.services.decrypter import decrypt_comment
 
 
 class TestDecrypt(unittest.TestCase):

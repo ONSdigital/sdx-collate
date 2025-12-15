@@ -3,7 +3,7 @@ from datetime import date, datetime
 
 from unittest.mock import patch, Mock
 
-from app.datastore_connect import fetch_data_for_kind, fetch_data_for_survey
+from app.services.reader import fetch_data_for_kind, fetch_data_for_survey
 
 
 class MockKeyEntity:

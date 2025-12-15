@@ -1,12 +1,16 @@
-from sdx_gcp.app import get_logger
+import logging
+from pathlib import Path
 
-from app import cloud_config
+from sdx_base.loggy.configure import BASE_LOGGER_NAME
+from sdx_base.run import setup
+from sdx_base.settings.app import AppSettings
 from app.collate import collate_comments
+from app.settings import Settings
 
-
-logger = get_logger()
 
 if __name__ == '__main__':
-    logger.info('Starting SDX-Collate')
-    cloud_config()
+    proj_root = Path(__file__).parent  # sdx-collate dir
+    populated_settings: AppSettings = setup(Settings, proj_root)
+    logger = logging.getLogger(BASE_LOGGER_NAME)
+    logger.info(f"Starting {populated_settings.app_name}")
     collate_comments()

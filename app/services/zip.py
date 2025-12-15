@@ -1,7 +1,7 @@
 from io import BytesIO
 from zipfile import ZIP_DEFLATED, ZipFile
 
-from sdx_gcp.app import get_logger
+from app import get_logger
 
 logger = get_logger()
 
