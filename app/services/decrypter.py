@@ -2,13 +2,15 @@ import json
 
 from cryptography.fernet import Fernet
 
+from app.submission import CommentData
+
 
 class Decrypter:
 
     def __init__(self, decryption_key: str):
         self._decryption_key = decryption_key
 
-    def decrypt_comment(self, comment_token: str) -> dict:
+    def decrypt_comment(self, comment_token: str) -> CommentData:
         """
         Decrypts comments returned from Datastore query
         """
