@@ -3,7 +3,7 @@ from datetime import datetime
 from sdx_base.services.datastore import DatastoreService
 
 from app import get_logger
-
+from app.definitions.comments import DbEntity
 
 logger = get_logger()
 
@@ -14,21 +14,21 @@ class DbReader:
         self._project_id = project_id
         self._datastore_service = datastore_service
 
-    def fetch_comment_kinds(self) -> list:
+    def fetch_comment_kinds(self) -> list[str]:
         """
             Fetch a list of all comment kinds from datastore.
             Each kind is represented by {survey_id}_{period}
         """
         return self._datastore_service.fetch_kinds(self._project_id)
 
-    def fetch_entity_list(self, kind: str, start_date: datetime, end_date: datetime) -> list:
+    def fetch_entity_list(self, kind: str, start_date: datetime, end_date: datetime) -> list[DbEntity]:
         """
             Returns a list of the entities for the given 'kind',
             created between start_date (inclusive) and end_date (exclusive).
         """
         return self._datastore_service.fetch_entity_list_for_kind(self._project_id, kind, start_date, end_date)
 
-    def fetch_data_for_kind(self, kind: str, start_date: datetime, end_date: datetime) -> list:
+    def fetch_data_for_kind(self, kind: str, start_date: datetime, end_date: datetime) -> list[str]:
         """
             Returns a list of the encrypted data field from each entity within the given kind
         """
@@ -42,7 +42,7 @@ class DbReader:
                               survey_id: str,
                               period_list: list[str],
                               start_date: datetime,
-                              end_date: datetime) -> dict[str, list]:
+                              end_date: datetime) -> dict[str, list[str]]:
         """
             Returns a dict of the encrypted data fields for the given survey mapped to the period
         """

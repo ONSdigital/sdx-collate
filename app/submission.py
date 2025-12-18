@@ -1,16 +1,4 @@
-from typing import TypedDict, Optional
-
-
-class AdditionalComment(TypedDict):
-    qcode: str
-    comment: Optional[str]
-
-
-class CommentData(TypedDict):
-    ru_ref: str
-    boxes_selected: str
-    comment: Optional[str]
-    additional: list[AdditionalComment]
+from app.definitions.comments import CommentData
 
 
 class Submission:

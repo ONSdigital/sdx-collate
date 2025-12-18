@@ -91,13 +91,13 @@ class Collate:
         """
         end_date = self.to_datetime(today)
         ninety_days_ago = self.to_datetime(end_date) - timedelta(90)
-        kinds = self._reader.fetch_comment_kinds()
+        kinds: list[str] = self._reader.fetch_comment_kinds()
         for k in kinds:
             survey_id, _, period = k.partition('_')
             # get the list of encrypted data for this kind
-            encrypted_data_list = self._reader.fetch_data_for_kind(k, start_date=ninety_days_ago, end_date=end_date)
+            encrypted_data_list: list[str] = self._reader.fetch_data_for_kind(k, start_date=ninety_days_ago, end_date=end_date)
             # decrypt the data in the list and convert to Submission
-            submission_list = [Submission(period, self._decrypter.decrypt_comment(c)) for c in encrypted_data_list]
+            submission_list: list[Submission] = [Submission(period, self._decrypter.decrypt_comment(c)) for c in encrypted_data_list]
             # create the workbook
             workbook, _ = self._writer.create_excel(survey_id, submission_list)
             filename = f"{k}.xlsx"
