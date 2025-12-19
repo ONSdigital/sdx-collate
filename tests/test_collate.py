@@ -83,6 +83,7 @@ class MockHttpService:
 class TestCollate(unittest.TestCase):
 
     def setUp(self):
+        os.environ["PROJECT_ID"] = "ons-sdx-sandbox"
         proj_root = Path(__file__).parent.parent  # sdx-collate dir
         populated_settings: Settings = setup(Settings, proj_root, secret_reader=MockSecretReader())
         logger = logging.getLogger(BASE_LOGGER_NAME)
