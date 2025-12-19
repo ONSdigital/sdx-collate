@@ -72,7 +72,6 @@ class Collate:
 
         return zip_file.get()
 
-
     def create_daily_zip_only(self, day: date) -> BytesIO:
         """
         Creates a zipfile containing only comments received on the provided 'day'
@@ -82,7 +81,6 @@ class Collate:
         zip_file = InMemoryZip()
         self.append_daily_files(zip_file, day)
         return zip_file.get()
-
 
     def append_90_days_files(self, zip_file: InMemoryZip, today: date):
         """

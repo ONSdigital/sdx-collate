@@ -1,18 +1,18 @@
 import unittest
 
-from app import CONFIG
-from app.services.decrypter import decrypt_comment
+from app.services.decrypter import Decrypter
 
 
 class TestDecrypt(unittest.TestCase):
 
     def setUp(self):
-        CONFIG.DECRYPT_COMMENT_KEY = "E3rjFT2i9ALcvc99Pe3YqjIGrzm3LdMsCXc8nUaOEbc="
+        decryption_key = "E3rjFT2i9ALcvc99Pe3YqjIGrzm3LdMsCXc8nUaOEbc="
+        self.decrypter = Decrypter(decryption_key)
 
     def test_decrypt_comment_009(self):
         data = '''gAAAAABgCE5W1uIF-eNt96wT7sOOwgQyBoMNWhoGTzt3PZQeBw2LDQDK8oFWJtXW0aWbp4F5li8o8DxdZ2G9Hjq0Y5ahRAhyJj
         xMxAqdg9-Xmm6TKdgzKV9nY6WmnjsllJIrbefIz6vZpZw_IbXgeBILffnWeQDIw4F4s3HiDK37VZCVxuCJLAyRiQjorB5QxxjX7kvzLkwM'''
-        actual = decrypt_comment(data)
+        actual = self.decrypter.decrypt_comment(data)
 
         expected = {'ru_ref': '34650525171T',
                     'boxes_selected': '',
@@ -24,7 +24,7 @@ class TestDecrypt(unittest.TestCase):
         data = '''gAAAAABgCE1_ZOqzC9k2ssl9mRBMz1eso1fGkh7r0bO0HTwCkuqXwkTV32nq4syKoctX9SdvqeiMAnIs06ttzZ-9HjNo4sHzH7C4n
         _MXxShKuN9Yy066aBeJU2xVvPPSzSVkt3a7HZOBaNMa-fLB4TRw2T7cdPKAQeD5cK5wAh5Sv0HQkfWH5G25T-nPTcfMbkdQkBICEdOn'''
 
-        actual = decrypt_comment(data)
+        actual = self.decrypter.decrypt_comment(data)
         expected = {'ru_ref': '12346789012A',
                     'boxes_selected': '',
                     'comment': None,
@@ -40,7 +40,7 @@ class TestDecrypt(unittest.TestCase):
         tjQnNuAKdVZAB53Ou0L6LR7KcuQ073SiO8zJAnpTWpfmuqYIiAyCD_b0cdpXF2HNrw9Il9J4Em4ATTC2Ii36YQL0TRcLUCbRb9u98KEiTK9FA
         3zzcTVwyKTHGlPC_VCVAD8DpEA=='''
 
-        actual = decrypt_comment(data)
+        actual = self.decrypter.decrypt_comment(data)
         expected = {'ru_ref': '12346789012A',
                     'boxes_selected': '91w, 95w, 96w, 97w, 91f, 95f, 96f, 97f, 191m, 195m, 196m, '
                                       '197m, 191w4, 195w4, 196w4, 197w4, 191w5, 195w5, 196w5, '
