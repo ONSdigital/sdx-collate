@@ -1,15 +1,17 @@
+from app.definitions.comments import CommentData
+
 
 class Submission:
 
-    def __init__(self, period: str, submission_dict: dict):
+    def __init__(self, period: str, comment_data: CommentData):
         self.period = period
-        self.comment = submission_dict['comment']
-        self.boxes_selected = submission_dict['boxes_selected']
-        self.ru_ref = submission_dict['ru_ref']
-        self.additional = self._populate_additional(submission_dict)
+        self.comment = comment_data['comment']
+        self.boxes_selected = comment_data['boxes_selected']
+        self.ru_ref = comment_data['ru_ref']
+        self.additional = self._populate_additional(comment_data)
 
     @staticmethod
-    def _populate_additional(submission_dict) -> dict:
+    def _populate_additional(submission_dict) -> dict[str, str]:
         additional_list = submission_dict['additional']
         additional_dict = {}
         for addition in additional_list:

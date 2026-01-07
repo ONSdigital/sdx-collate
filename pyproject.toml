@@ -1,0 +1,46 @@
+[project]
+name = "sdx-collate"
+version = "3.3.2"
+description = "Collating comments for SDX"
+requires-python = "==3.13.*"
+dependencies = [
+    "sdx-base==0.2.3",
+    "cryptography==43.0.1",
+    "openpyxl==3.1.0"
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+    "pytest-cov>=6.1.1",
+    "pytest-xdist>=3.6.1",
+    "mypy>=1.15.0",
+    "pandas>=2.2.3"
+]
+
+lint = [
+    "ruff>=0.11.7",
+]
+
+version-check = [
+     "toml>=0.10.2",
+     "tomlkit>=0.13.3",
+]
+
+[tool.uv.sources]
+sdx-base = { index = "sdx-repo" }
+
+[[tool.uv.index]]
+name = "sdx-repo"
+url = "https://europe-west2-python.pkg.dev/ons-sdx-ci/sdx-python-packages/simple/"
+
+[tool.ruff]
+line-length = 121
+exclude = [ "lib", "__pycache__", ".venv",]
+
+[tool.ruff.lint]
+extend-select = [ "E303", "W391", "W292", "E302"]
+preview = true
+
+[mypy]
+ignore_missing_imports = true
