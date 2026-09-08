@@ -1,6 +1,6 @@
 [project]
 name = "sdx-collate"
-version = "3.3.3"
+version = "3.3.4"
 description = "Collating comments for SDX"
 requires-python = "==3.13.*"
 dependencies = [
